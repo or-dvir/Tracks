@@ -10,8 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.FadeTransition
-import cafe.adriel.voyager.transitions.SlideTransition
-import com.hotmail.or_dvir.tracks.ui.HomeScreen
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreen
 import com.hotmail.or_dvir.tracks.ui.theme.TracksTheme
 import dagger.hilt.android.AndroidEntryPoint
 

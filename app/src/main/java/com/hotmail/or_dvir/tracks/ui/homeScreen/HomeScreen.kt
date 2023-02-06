@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.tracks.ui
+package com.hotmail.or_dvir.tracks.ui.homeScreen
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen

@@ -21,24 +21,24 @@ class TrackedEventsRepositoryImpl @Inject constructor(
 
     // todo for now assume all operations are successful
 
-    override fun getAllSortedByStartDescending(): Flow<List<TrackedEventModel>> =
-        dao.getAllSortedByStartDescending().map { it.toModels() }
+    override fun getAllSortedByAlphabet(): Flow<List<TrackedEventModel>> =
+        dao.getAllSortedByAlphabet().map { it.toModels() }
 
-    override suspend fun loadWindowById(id: Int): TrackedEventModel {
+    override suspend fun loadEventById(id: Int): TrackedEventModel {
         return withContext(dispatcher) {
             dao.loadEventById(id).toModel()
         }
     }
 
-    override suspend fun insertAll(vararg windows: TrackedEventModel): List<Long> {
+    override suspend fun insert(event: TrackedEventModel): Long {
         return shouldNotBeCancelled {
-            dao.insertAll(windows.map { it.toEntity() })
+            dao.insert(event.toEntity())
         }
     }
 
-    override suspend fun delete(windowId: Int) {
+    override suspend fun delete(eventId: Int) {
         return shouldNotBeCancelled {
-            dao.delete(windowId)
+            dao.delete(eventId)
         }
     }
 

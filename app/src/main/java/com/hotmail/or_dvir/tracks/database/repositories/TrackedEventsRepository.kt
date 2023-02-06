@@ -4,8 +4,8 @@ import com.hotmail.or_dvir.tracks.models.TrackedEventModel
 import kotlinx.coroutines.flow.Flow
 
 interface TrackedEventsRepository {
-    fun getAllSortedByStartDescending(): Flow<List<TrackedEventModel>>
-    suspend fun loadWindowById(id: Int): TrackedEventModel
-    suspend fun insertAll(vararg windows: TrackedEventModel): List<Long>
-    suspend fun delete(windowId: Int)
+    fun getAllSortedByAlphabet(): Flow<List<TrackedEventModel>>
+    suspend fun loadEventById(id: Int): TrackedEventModel
+    suspend fun insert(event: TrackedEventModel): Long
+    suspend fun delete(eventId: Int)
 }
