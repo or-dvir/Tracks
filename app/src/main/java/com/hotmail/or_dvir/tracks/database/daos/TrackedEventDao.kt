@@ -22,6 +22,6 @@ interface TrackedEventsDao {
     suspend fun insert(event: TrackedEventEntity): Long
 
     // todo also delete all event instances on other table!!!
-    @Query("DELETE FROM $TABLE_NAME WHERE $COLUMN_ID = :windowId")
+    @Query("DELETE FROM $TABLE_NAME WHERE $COLUMN_ID = :eventId")
     suspend fun delete(eventId: Int)
 }

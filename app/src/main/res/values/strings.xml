@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Tracks</string>
+    <string name="contentDescription_addTrackedEvent">add event</string>
+    <string name="screenTitle_homeScreen">My Events</string>
+    <string name="contentDescription_quickAdd">quick add</string>
 </resources>

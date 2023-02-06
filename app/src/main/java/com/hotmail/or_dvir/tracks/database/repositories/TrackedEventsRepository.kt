@@ -1,11 +1,11 @@
 package com.hotmail.or_dvir.tracks.database.repositories
 
-import com.hotmail.or_dvir.tracks.models.TrackedEventModel
+import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import kotlinx.coroutines.flow.Flow
 
 interface TrackedEventsRepository {
-    fun getAllSortedByAlphabet(): Flow<List<TrackedEventModel>>
-    suspend fun loadEventById(id: Int): TrackedEventModel
-    suspend fun insert(event: TrackedEventModel): Long
+    fun getAllSortedByAlphabet(): Flow<List<TrackedEvent>>
+    suspend fun loadEventById(id: Int): TrackedEvent
+    suspend fun insert(event: TrackedEvent): Long
     suspend fun delete(eventId: Int)
 }
