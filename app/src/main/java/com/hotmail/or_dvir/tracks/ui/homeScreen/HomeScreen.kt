@@ -1,6 +1,7 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -129,10 +131,7 @@ class HomeScreen : Screen {
         }
 
         Dialog(onDismissRequest = onDismiss) {
-            Surface(
-                shape = RoundedCornerShape(5.dp),
-                color = MaterialTheme.colors.surface
-            ) {
+            Surface(shape = RoundedCornerShape(5.dp)) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -148,7 +147,10 @@ class HomeScreen : Screen {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 5.dp)
+                            .padding(
+                                top = 16.dp,
+                                bottom = 5.dp
+                            )
                     ) {
                         TextField(
                             value = userInput,
@@ -184,8 +186,9 @@ class HomeScreen : Screen {
                         }
 
                         TextButton(onClick = {
-                            if(!isError) {
+                            if (!isError) {
                                 onUserEvent(UserEvent.OnCreateNewEvent(userInput))
+                                onDismiss()
                             }
                         }) {
                             Text(stringResource(R.string.create))
@@ -209,13 +212,15 @@ class HomeScreen : Screen {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onUserEvent(UserEvent.OnEventClicked(event.id)) }
-                .padding(16.dp),
+                .padding(),
             state = rememberDismissState(),
             background = {
-                Box(
+                Column(
+                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .background(Color.Red)
+                        .padding(start = 16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
@@ -225,43 +230,30 @@ class HomeScreen : Screen {
             },
             directions = setOf(DismissDirection.StartToEnd),
             dismissContent = {
-                Text(
-                    text = event.name
-                )
-
-                IconButton(
-                    onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(event.id)) }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colors.surface)
+                        .padding(start = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.AddCircle,
-                        contentDescription = stringResource(R.string.contentDescription_quickInstance)
+                    Text(
+                        text = event.name,
+                        modifier = Modifier.border(1.dp, Color.Blue)
                     )
+
+                    IconButton(
+                        onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(event.id)) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.AddCircle,
+                            contentDescription = stringResource(R.string.contentDescription_quickInstance)
+                        )
+                    }
                 }
             }
         )
-
-
-//        Row(
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .clickable { onUserEvent(UserEvent.OnEventClicked(event.id)) }
-//                .padding(16.dp)
-//        ) {
-//            Text(
-//                text = event.name
-//            )
-//
-//            IconButton(
-//                onClick = { onUserEvent(UserEvent.OnQuickAddClicked(event.id)) }
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Filled.AddCircle,
-//                    contentDescription = stringResource(R.string.contentDescription_quickAdd)
-//                )
-//            }
-//        }
     }
 
     @Preview(showBackground = true)
