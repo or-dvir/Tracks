@@ -37,7 +37,9 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun onDeleteEvent(eventId: Int) {
-        //todo
+        viewModelScope.launch {
+            repo.delete(eventId)
+        }
     }
 
     private fun onQuickInstanceClicked(eventId: Int) {
@@ -58,7 +60,7 @@ class HomeScreenViewModel @Inject constructor(
 
 sealed class UserEvent {
     data class OnCreateNewEvent(val name: String) : UserEvent()
-    data class OnEventClicked(val   id: Int) : UserEvent()
+    data class OnEventClicked(val id: Int) : UserEvent()
     data class OnQuickInstanceClicked(val id: Int) : UserEvent()
     data class OnDeleteEvent(val id: Int) : UserEvent()
 }
