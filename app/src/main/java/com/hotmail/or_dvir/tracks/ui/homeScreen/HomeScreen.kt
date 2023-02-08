@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -123,7 +125,7 @@ class HomeScreen : Screen {
         }
 
         var isError by remember {
-            mutableStateOf(false)
+            mutableStateOf(true)
         }
 
         Dialog(onDismissRequest = onDismiss) {
@@ -182,7 +184,9 @@ class HomeScreen : Screen {
                         }
 
                         TextButton(onClick = {
-                            onUserEvent(UserEvent.OnCreateNewEvent(userInput))
+                            if(!isError) {
+                                onUserEvent(UserEvent.OnCreateNewEvent(userInput))
+                            }
                         }) {
                             Text(stringResource(R.string.create))
                         }
@@ -208,10 +212,16 @@ class HomeScreen : Screen {
                 .padding(16.dp),
             state = rememberDismissState(),
             background = {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = null
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Red)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = null
+                    )
+                }
             },
             directions = setOf(DismissDirection.StartToEnd),
             dismissContent = {
