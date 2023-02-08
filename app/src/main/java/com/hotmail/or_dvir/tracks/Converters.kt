@@ -15,7 +15,7 @@ fun TrackedEvent.toEntity() = TrackedEventEntity(
 fun List<TrackedEventEntity>.toEvents() = this.map { it.toEvent() }
 fun TrackedEventEntity.toEvent() = TrackedEvent(
     id = id,
-    name = ""
+    name = name
 )
 
 @JvmName("TrackedEventInstanceEntities")
