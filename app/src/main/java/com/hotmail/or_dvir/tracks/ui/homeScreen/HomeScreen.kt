@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
@@ -215,11 +216,16 @@ class HomeScreen : Screen {
         val updatedEvent by rememberUpdatedState(event)
         val dismissState = rememberDismissState(
             confirmStateChange = {
-                onUserEvent(UserEvent.OnDeleteEvent(updatedEvent.id))
-                //todo test the dismiss function!!!!!!
-                // for now, it doesnt actually remove the item from the database!!!
+                //todo
                 // delete confirmation dialog
-                true
+                return@rememberDismissState if (it == DismissValue.Default) {
+                    //threshold has NOT been reached
+                    false
+                } else {
+                    //threshold has been reached - item is dismissed
+                    onUserEvent(UserEvent.OnDeleteEvent(updatedEvent.id))
+                    true
+                }
             }
         )
 
@@ -229,10 +235,7 @@ class HomeScreen : Screen {
                 .clickable { onUserEvent(UserEvent.OnEventClicked(event.id)) }
                 .padding()
                 .animateItemPlacement(),
-            //todo how do i use this?
-//                .animateItemPlacement(),
-            //todo threshold not working
-            dismissThresholds = { FractionalThreshold(0.1f) },
+            dismissThresholds = { FractionalThreshold(0.5f) },
             state = dismissState,
             background = {
                 //should help with performance
