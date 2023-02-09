@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -58,7 +61,7 @@ import com.hotmail.or_dvir.tracks.models.TrackedEvent
 typealias OnUserEvent = (event: UserEvent) -> Unit
 
 class HomeScreen : Screen {
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val viewModel = getViewModel<HomeScreenViewModel>()
@@ -203,9 +206,9 @@ class HomeScreen : Screen {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
-    private fun TrackedEventRow(
+    private fun LazyItemScope.TrackedEventRow(
         event: TrackedEvent,
         onUserEvent: OnUserEvent
     ) {
@@ -224,20 +227,28 @@ class HomeScreen : Screen {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onUserEvent(UserEvent.OnEventClicked(event.id)) }
-                .padding(),
+                .padding()
+                .animateItemPlacement(),
+            //todo how do i use this?
+//                .animateItemPlacement(),
+            //todo threshold not working
+            dismissThresholds = { FractionalThreshold(0.1f) },
             state = dismissState,
             background = {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Red)
-                        .padding(start = 16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = null
-                    )
+                //should help with performance
+                dismissState.dismissDirection?.apply {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Red)
+                            .padding(start = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = null
+                        )
+                    }
                 }
             },
             directions = setOf(DismissDirection.StartToEnd),
@@ -277,9 +288,9 @@ class HomeScreen : Screen {
     @Preview(showBackground = true)
     @Composable
     private fun TrackedEventRowPreview() {
-        TrackedEventRow(
-            TrackedEvent(name = "event name"),
-            onUserEvent = { }
-        )
+//        TrackedEventRow(
+//            TrackedEvent(name = "event name"),
+//            onUserEvent = { }
+//        )
     }
 }
