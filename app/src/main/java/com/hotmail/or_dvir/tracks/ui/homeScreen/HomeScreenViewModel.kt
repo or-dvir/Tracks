@@ -47,12 +47,11 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun onEventClicked(eventId: Int) {
-        // todo go to event instances screen
+        // todo go to event occurrences screen
         //  should probably be directly in compose screen and not here...
     }
 
     // todo
-    //  create new event
     //  create quick instance of event
     //  delete event
     //      also all of it's instances!!! make note for future!!!
