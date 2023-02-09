@@ -56,14 +56,12 @@ import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 
 // todo
-//  create new trackable event
 //  delete trackable event
 //      also delete all instances of this event!!!
 
 typealias OnUserEvent = (event: UserEvent) -> Unit
 
 class HomeScreen : Screen {
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val viewModel = getViewModel<HomeScreenViewModel>()
@@ -71,7 +69,6 @@ class HomeScreen : Screen {
         val dummyEvenId by remember { mutableStateOf(-1) }
         var showNewEventDialog by remember { mutableStateOf(false) }
         var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEvenId)) }
-//        var eventIdToDelete: Int? by remember { mutableStateOf(null) }
 
         Scaffold(
             //todo
@@ -332,9 +329,15 @@ class HomeScreen : Screen {
     @Preview(showBackground = true)
     @Composable
     private fun TrackedEventRowPreview() {
-//        TrackedEventRow(
-//            TrackedEvent(name = "event name"),
-//            onUserEvent = { }
-//        )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(1) {
+                TrackedEventRow(
+                    TrackedEvent(name = "event name"),
+                    onUserEvent = { }
+                )
+            }
+        }
     }
 }
