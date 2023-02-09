@@ -5,7 +5,9 @@
     <string name="contentDescription_quickInstance">quick instance</string>
     <string name="create">create</string>
     <string name="dialogTitle_newTrackableEvent">New Trackable Event</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="hint_eventName">Event name</string>
     <string name="error_eventNameMustNotBeEmpty">Event name cannot be empty</string>
+    <string name="deleteConfirmation">Are you sure you want to delete this event and all of it\'s occurrences?</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.Divider
@@ -67,9 +68,10 @@ class HomeScreen : Screen {
     override fun Content() {
         val viewModel = getViewModel<HomeScreenViewModel>()
 
-        var showNewEventDialog by remember {
-            mutableStateOf(false)
-        }
+        val dummyEvenId by remember { mutableStateOf(-1) }
+        var showNewEventDialog by remember { mutableStateOf(false) }
+        var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEvenId)) }
+//        var eventIdToDelete: Int? by remember { mutableStateOf(null) }
 
         Scaffold(
             //todo
@@ -106,13 +108,27 @@ class HomeScreen : Screen {
                     ) { index, item ->
                         TrackedEventRow(
                             event = item,
-                            onUserEvent = viewModel::onUserEvent,
+                            onUserEvent = { event ->
+                                if (event is UserEvent.OnDeleteEvent) {
+                                    showDeleteConfirmationDialog = Pair(true, event.id)
+                                } else {
+                                    viewModel.onUserEvent(event)
+                                }
+                            }
                         )
 
                         if (index != trackedEvents.lastIndex) {
                             Divider()
                         }
                     }
+                }
+
+                showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
+                    DeleteConfirmationDialog(
+                        eventId = second,
+                        onUserEvent = viewModel::onUserEvent,
+                        onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEvenId) }
+                    )
                 }
 
                 if (showNewEventDialog) {
@@ -207,6 +223,31 @@ class HomeScreen : Screen {
         }
     }
 
+    @Composable
+    private fun DeleteConfirmationDialog(
+        eventId: Int,
+        onUserEvent: OnUserEvent,
+        onDismiss: () -> Unit
+    ) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(onClick = {
+                    onUserEvent(UserEvent.OnDeleteEvent(eventId))
+                    onDismiss()
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            text = { Text(stringResource(R.string.deleteConfirmation)) }
+        )
+    }
+
     @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun LazyItemScope.TrackedEventRow(
@@ -216,16 +257,16 @@ class HomeScreen : Screen {
         val updatedEvent by rememberUpdatedState(event)
         val dismissState = rememberDismissState(
             confirmStateChange = {
-                //todo
-                // delete confirmation dialog
-                return@rememberDismissState if (it == DismissValue.Default) {
+                if (it == DismissValue.Default) {
                     //threshold has NOT been reached
-                    false
                 } else {
                     //threshold has been reached - item is dismissed
                     onUserEvent(UserEvent.OnDeleteEvent(updatedEvent.id))
-                    true
                 }
+
+                //we are showing a deletion confirmation dialog in the caller composable.
+                //until the user confirms the action, the row should NOT be dismissed
+                false
             }
         )
 

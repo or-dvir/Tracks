@@ -3,7 +3,7 @@ package com.hotmail.or_dvir.tracks
 import com.hotmail.or_dvir.tracks.database.entities.TrackedEventEntity
 import com.hotmail.or_dvir.tracks.database.entities.TrackedEventInstanceEntity
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
-import com.hotmail.or_dvir.tracks.models.TrackedEventInstance
+import com.hotmail.or_dvir.tracks.models.TrackedEventOccurrence
 
 @JvmName("TrackedEventEntities")
 fun List<TrackedEvent>.toEntities() = this.map { it.toEntity() }
@@ -19,8 +19,8 @@ fun TrackedEventEntity.toEvent() = TrackedEvent(
 )
 
 @JvmName("TrackedEventInstanceEntities")
-fun List<TrackedEventInstance>.toEntities() = this.map { it.toEntity() }
-fun TrackedEventInstance.toEntity() = TrackedEventInstanceEntity(
+fun List<TrackedEventOccurrence>.toEntities() = this.map { it.toEntity() }
+fun TrackedEventOccurrence.toEntity() = TrackedEventInstanceEntity(
     id = id,
     startMillis = startMillis,
     endMillis = endMillis,
@@ -29,7 +29,7 @@ fun TrackedEventInstance.toEntity() = TrackedEventInstanceEntity(
 )
 
 fun List<TrackedEventInstanceEntity>.toEventInstances() = this.map { it.toEventInstance() }
-fun TrackedEventInstanceEntity.toEventInstance() = TrackedEventInstance(
+fun TrackedEventInstanceEntity.toEventInstance() = TrackedEventOccurrence(
     startMillis = startMillis,
     endMillis = endMillis,
     note = note,
