@@ -1,7 +1,6 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +58,7 @@ import com.hotmail.or_dvir.tracks.models.TrackedEvent
 typealias OnUserEvent = (event: UserEvent) -> Unit
 
 class HomeScreen : Screen {
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     override fun Content() {
         val viewModel = getViewModel<HomeScreenViewModel>()
@@ -95,7 +96,10 @@ class HomeScreen : Screen {
                     viewModel.trackedEventsFlow.collectAsStateLifecycleAware(initial = emptyList()).value
 
                 LazyColumn {
-                    itemsIndexed(trackedEvents) { index, item ->
+                    itemsIndexed(
+                        items = trackedEvents,
+                        key = { _, item -> item.id },
+                    ) { index, item ->
                         TrackedEventRow(
                             event = item,
                             onUserEvent = viewModel::onUserEvent,
@@ -205,15 +209,23 @@ class HomeScreen : Screen {
         event: TrackedEvent,
         onUserEvent: OnUserEvent
     ) {
-        //todo test the dismiss function!!!!!!
-        // for now, it doesnt actually remove the item from the database!!!
-        // delete confirmation dialog
+        val updatedEvent by rememberUpdatedState(event)
+        val dismissState = rememberDismissState(
+            confirmStateChange = {
+                onUserEvent(UserEvent.OnDeleteEvent(updatedEvent.id))
+                //todo test the dismiss function!!!!!!
+                // for now, it doesnt actually remove the item from the database!!!
+                // delete confirmation dialog
+                true
+            }
+        )
+
         SwipeToDismiss(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onUserEvent(UserEvent.OnEventClicked(event.id)) }
                 .padding(),
-            state = rememberDismissState(),
+            state = dismissState,
             background = {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -238,15 +250,12 @@ class HomeScreen : Screen {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = event.name,
-                        modifier = Modifier.border(1.dp, Color.Blue)
-                    )
-
+                    Text(event.name)
                     IconButton(
                         onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(event.id)) }
                     ) {
                         Icon(
+                            tint = MaterialTheme.colors.secondaryVariant,
                             imageVector = Icons.Filled.AddCircle,
                             contentDescription = stringResource(R.string.contentDescription_quickInstance)
                         )
