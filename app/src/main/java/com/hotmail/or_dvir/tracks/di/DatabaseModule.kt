@@ -26,4 +26,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideTrackedEventsDao(db: AppDatabase) = db.trackedEventsDao()
+
+    @Provides
+    @Singleton
+    fun provideEventOccurrencesDao(db: AppDatabase) = db.eventOccurrencesDao()
 }

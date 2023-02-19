@@ -8,7 +8,6 @@ import com.hotmail.or_dvir.tracks.toEvents
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -31,24 +30,20 @@ class TrackedEventsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insert(event: TrackedEvent): Long {
-        return shouldNotBeCancelled {
+        return shouldNotBeCancelled(
+            dispatcher = dispatcher,
+            scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
+        ) {
             dao.insert(event.toEntity())
         }
     }
 
     override suspend fun delete(eventId: Int) {
-        return shouldNotBeCancelled {
+        return shouldNotBeCancelled(
+            dispatcher = dispatcher,
+            scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
+        ) {
             dao.delete(eventId)
-        }
-    }
-
-    private suspend inline fun <T : Any> shouldNotBeCancelled(
-        crossinline operation: suspend (coroutineScope: CoroutineScope) -> T
-    ): T {
-        return withContext(dispatcher) {
-            scopeThatShouldNotBeCancelled.async {
-                operation(this)
-            }.await()
         }
     }
 }

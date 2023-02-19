@@ -15,7 +15,7 @@ interface EventOccurrencesDao {
     @Query("SELECT * FROM $TABLE_NAME " +
             "WHERE $COLUMN_EVENT_ID = :eventId " +
             "ORDER BY $COLUMN_START_MILLIS DESC")
-    fun getAllOccurrencesByStartDateDesc(eventId: Int): Flow<List<EventOccurrenceEntity>>
+    fun getAllByStartDateDesc(eventId: Int): Flow<List<EventOccurrenceEntity>>
 
     @Insert
     suspend fun insert(occurrence: EventOccurrenceEntity): Long
