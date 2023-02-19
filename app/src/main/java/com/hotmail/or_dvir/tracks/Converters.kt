@@ -1,9 +1,9 @@
 package com.hotmail.or_dvir.tracks
 
+import com.hotmail.or_dvir.tracks.database.entities.EventOccurrenceEntity
 import com.hotmail.or_dvir.tracks.database.entities.TrackedEventEntity
-import com.hotmail.or_dvir.tracks.database.entities.TrackedEventInstanceEntity
+import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
-import com.hotmail.or_dvir.tracks.models.TrackedEventOccurrence
 
 @JvmName("TrackedEventEntities")
 fun List<TrackedEvent>.toEntities() = this.map { it.toEntity() }
@@ -18,9 +18,9 @@ fun TrackedEventEntity.toEvent() = TrackedEvent(
     name = name
 )
 
-@JvmName("TrackedEventInstanceEntities")
-fun List<TrackedEventOccurrence>.toEntities() = this.map { it.toEntity() }
-fun TrackedEventOccurrence.toEntity() = TrackedEventInstanceEntity(
+@JvmName("TrackedEventOccurrenceEntities")
+fun List<EventOccurrence>.toEntities() = this.map { it.toEntity() }
+fun EventOccurrence.toEntity() = EventOccurrenceEntity(
     id = id,
     startMillis = startMillis,
     endMillis = endMillis,
@@ -28,8 +28,8 @@ fun TrackedEventOccurrence.toEntity() = TrackedEventInstanceEntity(
     eventId = eventId
 )
 
-fun List<TrackedEventInstanceEntity>.toEventInstances() = this.map { it.toEventInstance() }
-fun TrackedEventInstanceEntity.toEventInstance() = TrackedEventOccurrence(
+fun List<EventOccurrenceEntity>.toEventOccurrence() = this.map { it.toEventOccurrence() }
+fun EventOccurrenceEntity.toEventOccurrence() = EventOccurrence(
     startMillis = startMillis,
     endMillis = endMillis,
     note = note,
