@@ -59,6 +59,12 @@ import com.hotmail.or_dvir.tracks.models.TrackedEvent
 //  delete trackable event
 //      also delete all instances of this event!!!
 
+i stopped after finishing "swipe to dismiss"
+next steps:
+* implement "Event occurrences" screen
+* implement "occurrence details" screen
+    really necessary? can i integrate it into the "row"???
+
 typealias OnUserEvent = (event: UserEvent) -> Unit
 
 class HomeScreen : Screen {
