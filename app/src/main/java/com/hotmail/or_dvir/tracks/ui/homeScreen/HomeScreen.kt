@@ -68,6 +68,8 @@ class HomeScreen : Screen {
 
         val dummyEvenId by remember { mutableStateOf(-1) }
         var showNewEventDialog by remember { mutableStateOf(false) }
+        // first - should show dialog
+        // second - event id to delete
         var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEvenId)) }
 
         Scaffold(

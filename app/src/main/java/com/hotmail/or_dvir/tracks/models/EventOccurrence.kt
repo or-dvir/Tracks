@@ -1,6 +1,6 @@
 package com.hotmail.or_dvir.tracks.models
 
-data class TrackedEventOccurrence(
+data class EventOccurrence(
     val startMillis: Long,
     val endMillis: Long?,
     val note: String?,
