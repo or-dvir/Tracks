@@ -312,7 +312,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
                         .clickable {
-                            navigator.push(EventOccurrenceScreen(event))
+                            navigator.push(EventOccurrenceScreen(updatedEvent))
                         }
                         .padding(start = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -320,7 +320,7 @@ class HomeScreen : Screen {
                 ) {
                     Text(event.name)
                     IconButton(
-                        onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(event.id)) }
+                        onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(updatedEvent.id)) }
                     ) {
                         Icon(
                             tint = MaterialTheme.colors.secondaryVariant,
