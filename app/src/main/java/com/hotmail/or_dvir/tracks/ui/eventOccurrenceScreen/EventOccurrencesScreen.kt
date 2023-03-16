@@ -126,7 +126,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     ) {
         // todo
         //  FAB to add new occurrence
-        //  swipe to delete with confirmation dialog
 
         val dummyOccurrenceId by remember { mutableStateOf(-1) }
         // first - should show dialog

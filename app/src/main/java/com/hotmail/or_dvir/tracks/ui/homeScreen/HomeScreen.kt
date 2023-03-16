@@ -74,9 +74,6 @@ class HomeScreen : Screen {
         var showNewEventDialog by remember { mutableStateOf(false) }
 
         Scaffold(
-            //todo
-            // do i want a top app bar here?
-            // should the top app bar be shared for all screens?
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.homeScreen_title)) },
