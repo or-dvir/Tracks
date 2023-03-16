@@ -144,7 +144,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     occurrence = occurrence,
                     onUserEvent = { userEvent ->
                         if (userEvent is OnDeleteOccurrence) {
-                            showDeleteConfirmationDialog = Pair(true, userEvent.id)
+                            showDeleteConfirmationDialog = Pair(true, userEvent.occurrenceId)
                         } else {
                             onUserEvent(userEvent)
                         }
@@ -189,7 +189,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
-                    .padding(8.dp),
+                    .padding(16.dp),
                 // todo do i need this?
 //                verticalAlignment = Alignment.CenterVertically
             ) {
