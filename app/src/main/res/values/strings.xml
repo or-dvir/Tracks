@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Tracks</string>
     <string name="contentDescription_addTrackedEvent">add event</string>
+    <string name="contentDescription_addEventOccurrence">add occurrence</string>
     <string name="contentDescription_quickInstance">quick instance</string>
+    <string name="contentDescription_back">back</string>
     <string name="create">create</string>
     <string name="dialogTitle_newTrackableEvent">New Trackable Event</string>
     <string name="cancel">Cancel</string>
@@ -12,4 +14,6 @@
 
     <string name="homeScreen_title">My Events</string>
     <string name="homeScreen_emptyView">You are not tracking any events</string>
+
+    <string name="eventOccurrences_emptyView">There are no occurrences for this event</string>
 </resources>
