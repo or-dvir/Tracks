@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
-import androidx.compose.material.DismissValue.Default
 import androidx.compose.material.DismissValue.DismissedToStart
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
@@ -73,15 +72,10 @@ fun LazyItemScope.SwipeToDelete(
         confirmStateChange = {
             when (it) {
                 deleteDismissValue -> onDeleteRequested()
-                Default -> {
-                    /*threshold has NOT been reached - do nothing*/
-                }
                 DismissedToStart -> {
-                    /*todo when adding option for second swipe direction*/
+                    //todo when adding option for second swipe direction
                 }
-                else -> {
-                    //do nothing. either threshold has not been reached or value is deleteDismissValue
-                }
+                else -> { /* do nothing. */ }
             }
 
             //its up to the caller to actually "dismiss" the item
