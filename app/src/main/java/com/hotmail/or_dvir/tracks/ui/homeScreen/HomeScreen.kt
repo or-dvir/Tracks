@@ -51,19 +51,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
+import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 
 // todo
 //  delete trackable event
 //      also delete all instances of this event!!!
 
-i stopped after finishing "swipe to dismiss"
-next steps:
-* implement "Event occurrences" screen
-* implement "occurrence details" screen
-    really necessary? can i integrate it into the "row"???
+// todo stopped here
+//  i stopped after finishing "swipe to dismiss"
+//  next steps:
+//  * implement "Event occurrences" screen
+//  * implement "occurrence details" screen
+//  really necessary? can i integrate it into the "row"???
 
 typealias OnUserEvent = (event: UserEvent) -> Unit
 
@@ -71,12 +76,7 @@ class HomeScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel = getViewModel<HomeScreenViewModel>()
-
-        val dummyEvenId by remember { mutableStateOf(-1) }
         var showNewEventDialog by remember { mutableStateOf(false) }
-        // first - should show dialog
-        // second - event id to delete
-        var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEvenId)) }
 
         Scaffold(
             //todo
@@ -84,7 +84,7 @@ class HomeScreen : Screen {
             // should the top app bar be shared for all screens?
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.screenTitle_homeScreen)) },
+                    title = { Text(stringResource(R.string.homeScreen_title)) },
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -106,33 +106,12 @@ class HomeScreen : Screen {
                 val trackedEvents =
                     viewModel.trackedEventsFlow.collectAsStateLifecycleAware(initial = emptyList()).value
 
-                LazyColumn {
-                    itemsIndexed(
-                        items = trackedEvents,
-                        key = { _, item -> item.id },
-                    ) { index, item ->
-                        TrackedEventRow(
-                            event = item,
-                            onUserEvent = { event ->
-                                if (event is UserEvent.OnDeleteEvent) {
-                                    showDeleteConfirmationDialog = Pair(true, event.id)
-                                } else {
-                                    viewModel.onUserEvent(event)
-                                }
-                            }
-                        )
-
-                        if (index != trackedEvents.lastIndex) {
-                            Divider()
-                        }
-                    }
-                }
-
-                showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
-                    DeleteConfirmationDialog(
-                        eventId = second,
-                        onUserEvent = viewModel::onUserEvent,
-                        onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEvenId) }
+                if (trackedEvents.isEmpty()) {
+                    EmptyContent()
+                } else {
+                    NonEmptyContent(
+                        trackedEvents = trackedEvents,
+                        onUserEvent = viewModel::onUserEvent
                     )
                 }
 
@@ -143,6 +122,57 @@ class HomeScreen : Screen {
                     )
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun EmptyContent() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(stringResource(R.string.homeScreen_emptyView))
+        }
+    }
+
+    @Composable
+    private fun NonEmptyContent(
+        trackedEvents: List<TrackedEvent>,
+        onUserEvent: OnUserEvent
+    ) {
+        val dummyEvenId by remember { mutableStateOf(-1) }
+        // first - should show dialog
+        // second - event id to delete
+        var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEvenId)) }
+
+        LazyColumn {
+            itemsIndexed(
+                items = trackedEvents,
+                key = { _, item -> item.id },
+            ) { index, item ->
+                TrackedEventRow(
+                    event = item,
+                    onUserEvent = { event ->
+                        if (event is UserEvent.OnDeleteEvent) {
+                            showDeleteConfirmationDialog = Pair(true, event.id)
+                        } else {
+                            onUserEvent(event)
+                        }
+                    }
+                )
+
+                if (index != trackedEvents.lastIndex) {
+                    Divider()
+                }
+            }
+        }
+
+        showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
+            DeleteConfirmationDialog(
+                eventId = second,
+                onUserEvent = onUserEvent,
+                onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEvenId) }
+            )
         }
     }
 
@@ -302,10 +332,14 @@ class HomeScreen : Screen {
             },
             directions = setOf(DismissDirection.StartToEnd),
             dismissContent = {
+                val navigator = LocalNavigator.currentOrThrow
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
+                        .clickable {
+                            navigator.push(EventOccurrenceScreen(event.id))
+                        }
                         .padding(start = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween

@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hotmail.or_dvir.tracks.database.repositories.TrackedEventsRepository
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
-import com.hotmail.or_dvir.tracks.ui.homeScreen.UserEvent.OnCreateNewEvent
-import com.hotmail.or_dvir.tracks.ui.homeScreen.UserEvent.OnDeleteEvent
-import com.hotmail.or_dvir.tracks.ui.homeScreen.UserEvent.OnEventClicked
-import com.hotmail.or_dvir.tracks.ui.homeScreen.UserEvent.OnQuickInstanceClicked
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnCreateNewEvent
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnEventClicked
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnQuickInstanceClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -55,11 +55,11 @@ class HomeScreenViewModel @Inject constructor(
     //  create quick instance of event
     //  delete event
     //      also all of it's instances!!! make note for future!!!
-}
 
-sealed class UserEvent {
-    data class OnCreateNewEvent(val name: String) : UserEvent()
-    data class OnEventClicked(val id: Int) : UserEvent()
-    data class OnQuickInstanceClicked(val id: Int) : UserEvent()
-    data class OnDeleteEvent(val id: Int) : UserEvent()
+    sealed class UserEvent {
+        data class OnCreateNewEvent(val name: String) : UserEvent()
+        data class OnEventClicked(val id: Int) : UserEvent()
+        data class OnQuickInstanceClicked(val id: Int) : UserEvent()
+        data class OnDeleteEvent(val id: Int) : UserEvent()
+    }
 }
