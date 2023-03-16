@@ -63,12 +63,11 @@ import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 //  delete trackable event
 //      also delete all instances of this event!!!
 
-// todo stopped here
-//  i stopped after finishing "swipe to dismiss"
+//todo
 //  next steps:
 //  * implement "Event occurrences" screen
 //  * implement "occurrence details" screen
-//  really necessary? can i integrate it into the "row"???
+//      really necessary? can i integrate it into the "row"???
 
 typealias OnUserEvent = (event: UserEvent) -> Unit
 
@@ -308,7 +307,6 @@ class HomeScreen : Screen {
         SwipeToDismiss(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onUserEvent(UserEvent.OnEventClicked(event.id)) }
                 .padding()
                 .animateItemPlacement(),
             dismissThresholds = { FractionalThreshold(0.5f) },
@@ -338,7 +336,7 @@ class HomeScreen : Screen {
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
                         .clickable {
-                            navigator.push(EventOccurrenceScreen(event.id))
+                            navigator.push(EventOccurrenceScreen(event))
                         }
                         .padding(start = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,

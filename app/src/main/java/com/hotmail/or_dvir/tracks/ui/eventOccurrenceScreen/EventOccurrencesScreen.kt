@@ -5,8 +5,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 
-// todo navigate here when event is clicked
-data class EventOccurrenceScreen(val eventId: Int) : Screen {
+data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     @Composable
     override fun Content() {
         val viewModel =
