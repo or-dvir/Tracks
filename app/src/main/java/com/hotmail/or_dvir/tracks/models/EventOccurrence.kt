@@ -3,6 +3,7 @@ package com.hotmail.or_dvir.tracks.models
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 
 data class EventOccurrence(
@@ -16,13 +17,16 @@ data class EventOccurrence(
 ) {
     private companion object {
         // todo what does MEDIUM look like? should i change it?
-        val dateTimeFormatter: DateTimeFormatter =
-            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+        val dateTimeFormatter: DateTimeFormatter = DateTimeFormatterBuilder()
+            .append(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+            .appendLiteral(" ")
+            .append(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+            .toFormatter()
     }
 
     private val startDateTime =
         Instant.ofEpochMilli(startMillis).atZone(ZoneId.systemDefault()).toLocalDateTime()
-    val startTimeUserFriendly = startDateTime.format(dateTimeFormatter)
+    val startTimeUserFriendly: String = startDateTime.format(dateTimeFormatter)
 
     private val endDateTime = endMillis?.let {
         Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime()
