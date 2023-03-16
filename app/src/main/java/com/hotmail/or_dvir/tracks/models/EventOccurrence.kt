@@ -22,10 +22,10 @@ data class EventOccurrence(
 
     private val startDateTime =
         Instant.ofEpochMilli(startMillis).atZone(ZoneId.systemDefault()).toLocalDateTime()
-    private val startTimeUserFriendly = startDateTime.format(dateTimeFormatter)
+    val startTimeUserFriendly = startDateTime.format(dateTimeFormatter)
 
     private val endDateTime = endMillis?.let {
         Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
-    private val endTimeUserFriendly = endDateTime?.format(dateTimeFormatter)
+    val endTimeUserFriendly = endDateTime?.format(dateTimeFormatter)
 }
