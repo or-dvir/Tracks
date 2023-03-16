@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.Divider
@@ -56,8 +55,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
+import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
 
 // todo
 //  delete trackable event
@@ -152,7 +153,7 @@ class HomeScreen : Screen {
                 TrackedEventRow(
                     event = item,
                     onUserEvent = { event ->
-                        if (event is UserEvent.OnDeleteEvent) {
+                        if (event is OnDeleteEvent) {
                             showDeleteConfirmationDialog = Pair(true, event.id)
                         } else {
                             onUserEvent(event)
@@ -168,8 +169,8 @@ class HomeScreen : Screen {
 
         showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
             DeleteConfirmationDialog(
-                eventId = second,
-                onUserEvent = onUserEvent,
+                messageRes = R.string.homeScreen_deleteConfirmation,
+                onPositiveButtonClicked = { onUserEvent(OnDeleteEvent(second)) },
                 onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEvenId) }
             )
         }
@@ -257,31 +258,6 @@ class HomeScreen : Screen {
         }
     }
 
-    @Composable
-    private fun DeleteConfirmationDialog(
-        eventId: Int,
-        onUserEvent: OnUserEvent,
-        onDismiss: () -> Unit
-    ) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(onClick = {
-                    onUserEvent(UserEvent.OnDeleteEvent(eventId))
-                    onDismiss()
-                }) {
-                    Text(stringResource(R.string.delete))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
-            text = { Text(stringResource(R.string.deleteConfirmation)) }
-        )
-    }
-
     @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun LazyItemScope.TrackedEventRow(
@@ -295,7 +271,7 @@ class HomeScreen : Screen {
                     //threshold has NOT been reached
                 } else {
                     //threshold has been reached - item is dismissed
-                    onUserEvent(UserEvent.OnDeleteEvent(updatedEvent.id))
+                    onUserEvent(OnDeleteEvent(updatedEvent.id))
                 }
 
                 //we are showing a deletion confirmation dialog in the caller composable.
