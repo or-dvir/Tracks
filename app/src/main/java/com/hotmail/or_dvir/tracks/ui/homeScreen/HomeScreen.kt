@@ -106,6 +106,8 @@ class HomeScreen : Screen {
                 } else {
                     NonEmptyContent(
                         trackedEvents = trackedEvents,
+                        // todo if the event is "add quick occurrence",
+                        //  add something so the user knows it worked
                         onUserEvent = viewModel::onUserEvent
                     )
                 }
@@ -149,7 +151,7 @@ class HomeScreen : Screen {
                     event = trackedEvent,
                     onUserEvent = { userEvent ->
                         if (userEvent is OnDeleteEvent) {
-                            showDeleteConfirmationDialog = Pair(true, userEvent.id)
+                            showDeleteConfirmationDialog = Pair(true, userEvent.eventId)
                         } else {
                             onUserEvent(userEvent)
                         }
