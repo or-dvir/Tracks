@@ -1,4 +1,4 @@
-package com.hotmail.or_dvir.tracks
+package com.hotmail.or_dvir.tracks.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
