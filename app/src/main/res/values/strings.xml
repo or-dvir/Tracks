@@ -10,6 +10,7 @@
     <string name="hint_eventName">Event name</string>
     <string name="error_eventNameMustNotBeEmpty">Event name cannot be empty</string>
     <string name="delete">Delete</string>
+    <string name="occurrenceAdded">Occurrence added</string>
 
     <string name="homeScreen_title">My Events</string>
     <string name="homeScreen_emptyView">You are not tracking any events</string>
