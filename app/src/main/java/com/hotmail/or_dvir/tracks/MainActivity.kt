@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Navigator(HomeScreen()) {
+                        // todo how do i control the speed???
                         FadeTransition(it)
 //                        SlideTransition(it)
                     }
