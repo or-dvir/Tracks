@@ -14,18 +14,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
@@ -33,8 +29,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +37,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +49,7 @@ import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
+import com.hotmail.or_dvir.tracks.ui.SwipeToDelete
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
@@ -66,11 +60,14 @@ import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.On
 
 //todo
 //  next steps:
+//  * implement "rename" feature
+//      should add ability to swipe in other direction (shared composable!),
+//      and open the "new item" dialog with the current name filled in
 //  * implement "Event occurrences" screen
 //  * implement "occurrence details" screen
 //      really necessary? can i integrate it into the "row"???
 
-typealias OnUserEvent = (event: UserEvent) -> Unit
+private typealias OnUserEvent = (event: UserEvent) -> Unit
 
 class HomeScreen : Screen {
     @Composable
@@ -265,72 +262,32 @@ class HomeScreen : Screen {
         onUserEvent: OnUserEvent
     ) {
         val updatedEvent by rememberUpdatedState(event)
-        val dismissState = rememberDismissState(
-            confirmStateChange = {
-                if (it == DismissValue.Default) {
-                    //threshold has NOT been reached
-                } else {
-                    //threshold has been reached - item is dismissed
-                    onUserEvent(OnDeleteEvent(updatedEvent.id))
-                }
 
-                //we are showing a deletion confirmation dialog in the caller composable.
-                //until the user confirms the action, the row should NOT be dismissed
-                false
-            }
-        )
-
-        SwipeToDismiss(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding()
-                .animateItemPlacement(),
-            dismissThresholds = { FractionalThreshold(0.5f) },
-            state = dismissState,
-            background = {
-                //should help with performance
-                dismissState.dismissDirection?.apply {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Red)
-                            .padding(start = 16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Delete,
-                            contentDescription = null
-                        )
-                    }
-                }
-            },
-            directions = setOf(DismissDirection.StartToEnd),
-            dismissContent = {
-                val navigator = LocalNavigator.currentOrThrow
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colors.surface)
-                        .clickable {
-                            navigator.push(EventOccurrenceScreen(updatedEvent))
-                        }
-                        .padding(start = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+        SwipeToDelete(
+            onDelete = { onUserEvent(OnDeleteEvent(updatedEvent.id)) },
+        ) {
+            val navigator = LocalNavigator.currentOrThrow
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.surface)
+                    .clickable { navigator.push(EventOccurrenceScreen(updatedEvent)) }
+                    .padding(start = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(event.name)
+                IconButton(
+                    onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(updatedEvent.id)) }
                 ) {
-                    Text(event.name)
-                    IconButton(
-                        onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(updatedEvent.id)) }
-                    ) {
-                        Icon(
-                            tint = MaterialTheme.colors.secondaryVariant,
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = stringResource(R.string.contentDescription_quickInstance)
-                        )
-                    }
+                    Icon(
+                        tint = MaterialTheme.colors.secondaryVariant,
+                        imageVector = Icons.Filled.AddCircle,
+                        contentDescription = stringResource(R.string.contentDescription_quickInstance)
+                    )
                 }
             }
-        )
+        }
     }
 
     @Preview(showBackground = true)
