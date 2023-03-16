@@ -1,6 +1,5 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -137,23 +135,23 @@ class HomeScreen : Screen {
         trackedEvents: List<TrackedEvent>,
         onUserEvent: OnUserEvent
     ) {
-        val dummyEvenId by remember { mutableStateOf(-1) }
+        val dummyEventId by remember { mutableStateOf(-1) }
         // first - should show dialog
         // second - event id to delete
-        var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEvenId)) }
+        var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEventId)) }
 
         LazyColumn {
             itemsIndexed(
                 items = trackedEvents,
-                key = { _, item -> item.id },
-            ) { index, item ->
+                key = { _, event -> event.id },
+            ) { index, trackedEvent ->
                 TrackedEventRow(
-                    event = item,
-                    onUserEvent = { event ->
-                        if (event is OnDeleteEvent) {
-                            showDeleteConfirmationDialog = Pair(true, event.id)
+                    event = trackedEvent,
+                    onUserEvent = { userEvent ->
+                        if (userEvent is OnDeleteEvent) {
+                            showDeleteConfirmationDialog = Pair(true, userEvent.id)
                         } else {
-                            onUserEvent(event)
+                            onUserEvent(userEvent)
                         }
                     }
                 )
@@ -167,8 +165,8 @@ class HomeScreen : Screen {
         showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
             DeleteConfirmationDialog(
                 messageRes = R.string.homeScreen_deleteConfirmation,
-                onPositiveButtonClicked = { onUserEvent(OnDeleteEvent(second)) },
-                onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEvenId) }
+                onConfirm = { onUserEvent(OnDeleteEvent(second)) },
+                onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEventId) }
             )
         }
     }
@@ -255,7 +253,6 @@ class HomeScreen : Screen {
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun LazyItemScope.TrackedEventRow(
         event: TrackedEvent,
@@ -264,7 +261,7 @@ class HomeScreen : Screen {
         val updatedEvent by rememberUpdatedState(event)
 
         SwipeToDelete(
-            onDelete = { onUserEvent(OnDeleteEvent(updatedEvent.id)) },
+            onDeleteRequested = { onUserEvent(OnDeleteEvent(updatedEvent.id)) },
         ) {
             val navigator = LocalNavigator.currentOrThrow
             Row(
@@ -278,7 +275,7 @@ class HomeScreen : Screen {
             ) {
                 Text(event.name)
                 IconButton(
-                    onClick = { onUserEvent(UserEvent.OnQuickInstanceClicked(updatedEvent.id)) }
+                    onClick = { onUserEvent(UserEvent.OnQuickOccurrenceClicked(updatedEvent.id)) }
                 ) {
                     Icon(
                         tint = MaterialTheme.colors.secondaryVariant,

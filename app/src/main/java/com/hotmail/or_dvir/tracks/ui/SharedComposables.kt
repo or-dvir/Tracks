@@ -37,14 +37,14 @@ import com.example.tracks.R
 @Composable
 fun DeleteConfirmationDialog(
     @StringRes messageRes: Int,
-    onPositiveButtonClicked: () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onPositiveButtonClicked()
+                onConfirm()
                 onDismiss()
             }) {
                 Text(stringResource(R.string.delete))
@@ -62,7 +62,7 @@ fun DeleteConfirmationDialog(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun LazyItemScope.SwipeToDelete(
-    onDelete: () -> Unit,
+    onDeleteRequested: () -> Unit,
     dismissContent: @Composable RowScope.() -> Unit
 ) {
     val deleteDirection by remember { mutableStateOf(DismissDirection.StartToEnd) }
@@ -72,10 +72,12 @@ fun LazyItemScope.SwipeToDelete(
     val dismissState = rememberDismissState(
         confirmStateChange = {
             when (it) {
-                Default -> { /*threshold has NOT been reached - do nothing*/
+                deleteDismissValue -> onDeleteRequested()
+                Default -> {
+                    /*threshold has NOT been reached - do nothing*/
                 }
-                deleteDismissValue -> onDelete()
-                DismissedToStart -> { /*todo when adding option for second swipe direction*/
+                DismissedToStart -> {
+                    /*todo when adding option for second swipe direction*/
                 }
                 else -> {
                     //do nothing. either threshold has not been reached or value is deleteDismissValue

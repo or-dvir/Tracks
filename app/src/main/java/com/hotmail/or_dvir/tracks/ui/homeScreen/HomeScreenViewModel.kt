@@ -6,7 +6,7 @@ import com.hotmail.or_dvir.tracks.database.repositories.TrackedEventsRepository
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnCreateNewEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
-import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnQuickInstanceClicked
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnQuickOccurrenceClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun onUserEvent(event: UserEvent) {
         when (event) {
-            is OnQuickInstanceClicked -> onQuickOccurrenceClicked(event.id)
+            is OnQuickOccurrenceClicked -> onQuickOccurrenceClicked(event.id)
             is OnCreateNewEvent -> onCreateNewEvent(event.name)
             is OnDeleteEvent -> onDeleteEvent(event.id)
         }
@@ -47,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
 
     sealed class UserEvent {
         data class OnCreateNewEvent(val name: String) : UserEvent()
-        data class OnQuickInstanceClicked(val id: Int) : UserEvent()
+        data class OnQuickOccurrenceClicked(val id: Int) : UserEvent()
         data class OnDeleteEvent(val id: Int) : UserEvent()
     }
 }
