@@ -8,9 +8,30 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.FormatStyle
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.flow.Flow
+
+private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatterBuilder()
+    .append(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+    .appendLiteral(" ")
+    .append(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+    .toFormatter()
+
+private fun Long.millisToZonedDateTime() =
+    Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault())
+
+fun LocalDateTime.toUserFriendlyText() = this.format(dateTimeFormatter)
+
+fun Long.millisToLocalDateTime() = this.millisToZonedDateTime().toLocalDateTime()
+fun Long.millisToLocalDate() = this.millisToZonedDateTime().toLocalDate()
+fun Long.millisToLocalTime() = this.millisToZonedDateTime().toLocalTime()
 
 @Composable
 fun <T> rememberFlow(
