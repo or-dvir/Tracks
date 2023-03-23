@@ -30,7 +30,10 @@ class EventOccurrencesViewModel @AssistedInject constructor(
     }
 
     private fun onCreateNewOccurrence() {
-        //todo
+//        stopped here
+//        create ui element to add/edit new occurrrence and pass data here
+
+
 //        coroutineScope.launch {
 //            repo.insert(
 //                EventOccurrence(
@@ -52,8 +55,12 @@ class EventOccurrencesViewModel @AssistedInject constructor(
     }
 
     sealed class UserEvent {
-        // todo what parameters do i need here???
-        object OnCreateNewOccurrence : UserEvent()
+        data class OnCreateNewOccurrence(
+            val startMillis: Long,
+            val endMillis: Long?,
+            val note: String?
+        ) : UserEvent()
+
         data class OnDeleteOccurrence(val occurrenceId: Int) : UserEvent()
     }
 }

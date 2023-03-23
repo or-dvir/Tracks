@@ -9,7 +9,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -18,16 +20,22 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.flow.Flow
 
+private val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatterBuilder()
-    .append(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+    .append(dateFormatter)
     .appendLiteral(" ")
-    .append(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+    .append(timeFormatter)
     .toFormatter()
 
 private fun Long.millisToZonedDateTime() =
     Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault())
 
+fun LocalDateTime.toEpochMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
 fun LocalDateTime.toUserFriendlyText() = this.format(dateTimeFormatter)
+fun LocalDate.toUserFriendlyText() = this.format(dateFormatter)
+fun LocalTime.toUserFriendlyText() = this.format(timeFormatter)
 
 fun Long.millisToLocalDateTime() = this.millisToZonedDateTime().toLocalDateTime()
 fun Long.millisToLocalDate() = this.millisToZonedDateTime().toLocalDate()

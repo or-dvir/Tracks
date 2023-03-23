@@ -200,12 +200,7 @@ class HomeScreen : Screen {
             }
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = 16.dp,
-                        bottom = 5.dp
-                    )
+                modifier = Modifier.fillMaxWidth()
             ) {
                 TextField(
                     value = userInput,

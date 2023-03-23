@@ -1,13 +1,19 @@
 <resources>
     <string name="app_name">Tracks</string>
+
     <string name="contentDescription_addTrackedEvent">add event</string>
     <string name="contentDescription_addEventOccurrence">add occurrence</string>
     <string name="contentDescription_quickInstance">quick instance</string>
     <string name="contentDescription_back">back</string>
-    <string name="create">create</string>
+
     <string name="dialogTitle_newTrackableEvent">New Trackable Event</string>
-    <string name="cancel">Cancel</string>
+    <string name="dialogTitle_newOccurrence">New Occurrence</string>
+
     <string name="hint_eventName">Event name</string>
+    <string name="hint_note">Note</string>
+
+    <string name="create">create</string>
+    <string name="cancel">Cancel</string>
     <string name="error_eventNameMustNotBeEmpty">Event name cannot be empty</string>
     <string name="delete">Delete</string>
     <string name="occurrenceAdded">Occurrence added</string>
@@ -18,4 +24,8 @@
 
     <string name="eventOccurrencesScreen_emptyView">There are no occurrences for this event</string>
     <string name="eventOccurrencesScreen_deleteConfirmation">Are you sure you want to delete this occurrence?</string>
+    <string name="start">Start:</string>
+    <string name="end">End:</string>
+    <string name="select">Select</string>
+    <string name="remove">Remove</string>
 </resources>

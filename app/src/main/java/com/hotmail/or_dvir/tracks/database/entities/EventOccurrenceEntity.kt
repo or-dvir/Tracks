@@ -3,6 +3,7 @@ package com.hotmail.or_dvir.tracks.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.Month
 
 @Entity(tableName = EventOccurrenceEntity.TABLE_NAME)
 data class EventOccurrenceEntity(
@@ -26,3 +27,9 @@ data class EventOccurrenceEntity(
         const val COLUMN_START_MILLIS = "startMillis"
     }
 }
+
+private data class Date(
+    val year: Int,
+    val Month: String,
+    val dayOfMonth: Int
+)

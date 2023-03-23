@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,11 +33,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.tracks.R
 
 @Composable
@@ -121,6 +125,7 @@ fun LazyItemScope.SwipeToDelete(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TracksDialog(
     @StringRes titleRes: Int,
@@ -130,7 +135,11 @@ fun TracksDialog(
     @StringRes negativeButtonRes: Int = R.string.cancel,
     content: @Composable () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
+    // todo the dialog does not expand/collapse height-wise according to content
+    //  this is a GOOGLE bug!!! find a workaround on the internet...
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
         Surface(shape = RoundedCornerShape(5.dp)) {
             Column(
                 modifier = Modifier
@@ -143,8 +152,12 @@ fun TracksDialog(
                     style = MaterialTheme.typography.h6
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 //body
                 content()
+
+                Spacer(modifier = Modifier.height(5.dp))
 
                 //buttons
                 Row(
