@@ -13,16 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -40,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -50,6 +46,7 @@ import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.SwipeToDelete
+import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
@@ -188,78 +185,49 @@ class HomeScreen : Screen {
         onUserEvent: OnUserEvent,
         onDismiss: () -> Unit
     ) {
-        var userInput by remember {
-            mutableStateOf("")
-        }
+        var userInput by remember { mutableStateOf("") }
+        var isError by remember { mutableStateOf(true) }
 
-        var isError by remember {
-            mutableStateOf(true)
-        }
-
-        Dialog(onDismissRequest = onDismiss) {
-            Surface(shape = RoundedCornerShape(5.dp)) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    //title
-                    Text(
-                        text = stringResource(R.string.dialogTitle_newTrackableEvent),
-                        style = MaterialTheme.typography.h6
+        TracksDialog(
+            titleRes = R.string.dialogTitle_newTrackableEvent,
+            positiveButtonRes = R.string.create,
+            onDismiss = onDismiss,
+            onPositiveButtonClick = {
+                if (!isError) {
+                    onUserEvent(UserEvent.OnCreateNewEvent(userInput))
+                    onDismiss()
+                }
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 16.dp,
+                        bottom = 5.dp
                     )
+            ) {
+                TextField(
+                    value = userInput,
+                    onValueChange = {
+                        isError = it.isBlank()
+                        userInput = it
+                    },
+                    placeholder = {
+                        Text(stringResource(R.string.hint_eventName))
+                    }
+                )
 
-                    //body
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = 16.dp,
-                                bottom = 5.dp
-                            )
-                    ) {
-                        TextField(
-                            value = userInput,
-                            onValueChange = {
-                                isError = it.isBlank()
-                                userInput = it
-                            },
-                            placeholder = {
-                                Text(stringResource(R.string.hint_eventName))
-                            }
+                if (isError) {
+                    Text(
+                        text = stringResource(R.string.error_eventNameMustNotBeEmpty),
+                        color = MaterialTheme.colors.error,
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 5.dp
                         )
-
-                        if (isError) {
-                            Text(
-                                text = stringResource(R.string.error_eventNameMustNotBeEmpty),
-                                color = MaterialTheme.colors.error,
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.padding(
-                                    start = 16.dp,
-                                    top = 5.dp
-                                )
-                            )
-                        }
-                    }
-
-                    //buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = onDismiss) {
-                            Text(stringResource(R.string.cancel))
-                        }
-
-                        TextButton(onClick = {
-                            if (!isError) {
-                                onUserEvent(UserEvent.OnCreateNewEvent(userInput))
-                                onDismiss()
-                            }
-                        }) {
-                            Text(stringResource(R.string.create))
-                        }
-                    }
+                    )
                 }
             }
         }

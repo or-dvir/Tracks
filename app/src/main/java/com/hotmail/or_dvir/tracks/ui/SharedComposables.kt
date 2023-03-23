@@ -5,11 +5,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
@@ -17,6 +19,8 @@ import androidx.compose.material.DismissValue.DismissedToStart
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -31,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.example.tracks.R
 
 @Composable
@@ -75,7 +80,8 @@ fun LazyItemScope.SwipeToDelete(
                 DismissedToStart -> {
                     //todo when adding option for second swipe direction
                 }
-                else -> { /* do nothing. */ }
+                else -> { /* do nothing. */
+                }
             }
 
             //its up to the caller to actually "dismiss" the item
@@ -113,4 +119,47 @@ fun LazyItemScope.SwipeToDelete(
             }
         }
     )
+}
+
+@Composable
+fun TracksDialog(
+    @StringRes titleRes: Int,
+    @StringRes positiveButtonRes: Int,
+    onPositiveButtonClick: () -> Unit,
+    onDismiss: () -> Unit,
+    @StringRes negativeButtonRes: Int = R.string.cancel,
+    content: @Composable () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(shape = RoundedCornerShape(5.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                //title
+                Text(
+                    text = stringResource(titleRes),
+                    style = MaterialTheme.typography.h6
+                )
+
+                //body
+                content()
+
+                //buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(negativeButtonRes))
+                    }
+
+                    TextButton(onClick = onPositiveButtonClick) {
+                        Text(stringResource(positiveButtonRes))
+                    }
+                }
+            }
+        }
+    }
 }
