@@ -103,4 +103,7 @@ dependencies {
     implementation "cafe.adriel.voyager:voyager-navigator:$voyagerVersion"
     implementation "cafe.adriel.voyager:voyager-hilt:$voyagerVersion"
     implementation "cafe.adriel.voyager:voyager-transitions:$voyagerVersion"
+
+    // compose date/time pickers
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:0.9.0"
 }
