@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -209,7 +211,9 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 // todo
                 //  make outlined???
                 TextField(
-                    modifier = Modifier.fillMaxWidth().heightIn(max = 290.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 290.dp),
                     value = note,
                     onValueChange = { note = it },
                     label = { Text(stringResource(R.string.hint_note)) }
@@ -397,11 +401,13 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                         OccurrenceColumnStartEndDateTime(occurrence)
                     }
 
-                    // todo test a very long note. should i limit the height and make it scrollable?
                     occurrence.note.takeIf { it.isNotBlank() }?.let {
                         Spacer(Modifier.height(5.dp))
                         Text(
-                            modifier = Modifier.padding(start = 8.dp),
+                            modifier = Modifier
+                                .heightIn(max = 175.dp)
+                                .padding(start = 8.dp)
+                                .verticalScroll(rememberScrollState()),
                             text = it,
                             style = MaterialTheme.typography.body2
                         )
