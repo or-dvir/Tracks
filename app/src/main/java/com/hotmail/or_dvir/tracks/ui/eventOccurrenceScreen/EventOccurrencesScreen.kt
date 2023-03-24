@@ -44,23 +44,21 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
-import com.hotmail.or_dvir.tracks.millisToLocalDate
-import com.hotmail.or_dvir.tracks.millisToLocalTime
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
-import com.hotmail.or_dvir.tracks.toEpochMillis
 import com.hotmail.or_dvir.tracks.toUserFriendlyText
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.SwipeToDelete
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
+import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.EventOccurrenceData
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnCreateNewOccurrence
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnDeleteOccurrence
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 private typealias OnUserEvent = (event: UserEvent) -> Unit
@@ -139,11 +137,11 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         onUserEvent: OnUserEvent,
         onDismiss: () -> Unit
     ) {
-        var startDateTime by remember { mutableStateOf(LocalDateTime.now()) }
-//        var startMillis by remember { mutableStateOf(System.currentTimeMillis()) }
-        var endMillis: Long? by remember { mutableStateOf(null) }
+        var startDate: LocalDate by remember { mutableStateOf(LocalDate.now()) }
+        var startTime: LocalTime? by remember { mutableStateOf(null) }
+        var endDate: LocalDate? by remember { mutableStateOf(null) }
+        var endTime: LocalTime? by remember { mutableStateOf(null) }
         var note: String by remember { mutableStateOf("") }
-        val currentMillis = remember { System.currentTimeMillis() }
 
         TracksDialog(
             titleRes = R.string.dialogTitle_newOccurrence,
@@ -152,12 +150,17 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             onPositiveButtonClick = {
                 onUserEvent(
                     OnCreateNewOccurrence(
-                        startMillis = startDateTime.toEpochMillis(),
-//                        startMillis = startMillis,
-                        endMillis = endMillis,
-                        note = note.takeIf { it.isNotBlank() }
+                        EventOccurrenceData(
+                            startDate = startDate,
+                            startTime = startTime,
+                            endDate = endDate,
+                            endTime = endTime,
+                            note = note
+                        )
                     )
                 )
+
+                onDismiss()
             }
         ) {
             Column(
@@ -165,16 +168,17 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // start date/time
-                StartEndTimePicker(
-                    preText = R.string.start,
-                    dateText = currentMillis.millisToLocalDate().toUserFriendlyText(),
+                StartEndDateTimeRow(
+                    preText = R.string.preText_start,
+                    // an occurrence must at least have a start date
+                    removableStartDate = false,
+                    selectedDate = startDate,
+                    selectedTime = startTime,
                     onDateChanged = {
-                        startDateTime = LocalDateTime.of(it, startDateTime.toLocalTime())
+                        //since we set removableStartDate to `false`, `it` should not be null here
+                        startDate = it!!
                     },
-                    timeText = currentMillis.millisToLocalTime().toUserFriendlyText(),
-                    onTimeChanged = {
-                        startDateTime = LocalDateTime.of(startDateTime.toLocalDate(), it)
-                    }
+                    onTimeChanged = { startTime = it },
                 )
 
                 // end date/time
@@ -199,45 +203,40 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     }
 
     @Composable
-    private fun StartEndTimePicker(
+    private fun StartEndDateTimeRow(
         @StringRes preText: Int,
-        dateTime: LocalDateTime,
-        onDateChanged: (LocalDate) -> Unit,
-        onTimeChanged: (LocalTime) -> Unit,
+        selectedDate: LocalDate?,
+        selectedTime: LocalTime?,
+        onDateChanged: (LocalDate?) -> Unit,
+        onTimeChanged: (LocalTime?) -> Unit,
+        removableStartDate: Boolean = true
     ) {
         // todo
         //  option to remove date (but only for end)
         //  option to remove time (both for start/end)
 
         val datePickerState = rememberMaterialDialogState()
-
-
-
-
-
+        val timePickerState = rememberMaterialDialogState()
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(preText))
             Spacer(Modifier.width(5.dp))
 
-            // date
+            //date
             Text(
-                text = dateText,
+                text = selectedDate?.toUserFriendlyText() ?: stringResource(R.string.setDate),
                 color = MaterialTheme.colors.secondary,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable {
-                    // todo open date picker
-                }
+                modifier = Modifier.clickable { datePickerState.show() }
             )
             Spacer(Modifier.width(8.dp))
-            // time
+
+            //time
             Text(
-                text = timeText,
+                text = selectedTime?.toUserFriendlyText() ?: stringResource(R.string.setTime),
                 color = MaterialTheme.colors.secondary,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable {
-                    // todo open time picker
-                }
+                modifier = Modifier.clickable { timePickerState.show() }
             )
         }
 
@@ -245,19 +244,52 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         MaterialDialog(
             dialogState = datePickerState,
             buttons = {
-                positiveButton(res = R.string.select)
+                positiveButton(res = R.string.set)
                 negativeButton(res = R.string.cancel)
-                //todo change text to "delete"?
-                button(res = R.string.remove)
+                if (removableStartDate) {
+                    //todo
+                    // change text to "delete"?
+                    // button is in the middle, how can i move to end?
+                    button(
+                        res = R.string.remove,
+                        onClick = {
+                            onDateChanged(null)
+                            datePickerState.hide()
+                        }
+                    )
+                }
             },
         ) {
             datepicker(
-                // todo
-                //  set title?
-                //  set initial date to currently selected date
-                onDateChange = {
-                    asdasadadsdadasdaad
-                }
+                title = "",
+                onDateChange = onDateChanged,
+                initialDate = selectedDate ?: LocalDate.now()
+            )
+        }
+
+        //time picker
+        MaterialDialog(
+            dialogState = timePickerState,
+            buttons = {
+                positiveButton(res = R.string.set)
+                negativeButton(res = R.string.cancel)
+                //todo
+                // change text to "delete"?
+                // button is in the middle, how can i move to end?
+                button(
+                    res = R.string.remove,
+                    onClick = {
+                        onTimeChanged(null)
+                        timePickerState.hide()
+                    }
+                )
+            },
+        ) {
+            timepicker(
+                is24HourClock = true,
+                title = "",
+                onTimeChange = onTimeChanged,
+                initialTime = selectedTime ?: LocalTime.now()
             )
         }
     }
@@ -345,7 +377,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 // todo do i need this?
 //                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(occurrence.startTimeUserFriendly)
+                // todo update me
+                Text(occurrence.startDate.toUserFriendlyText())
             }
         }
     }

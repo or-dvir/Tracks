@@ -10,6 +10,7 @@ import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.On
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnQuickOccurrenceClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -44,10 +45,12 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             eventOccurrencesRepo.insert(
                 EventOccurrence(
-                    startMillis = System.currentTimeMillis(),
-                    endMillis = null,
-                    note = null,
-                    eventId = eventId
+                    note = "",
+                    eventId = eventId,
+                    startDate = LocalDate.now(),
+                    startTime = null,
+                    endDate = null,
+                    endTime = null,
                 )
             )
         }

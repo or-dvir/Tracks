@@ -22,10 +22,14 @@
     <string name="homeScreen_emptyView">You are not tracking any events</string>
     <string name="homeScreen_deleteConfirmation">Are you sure you want to delete this event and all of it\'s occurrences?</string>
 
+    <string name="preText_start">Start:</string>
+    <string name="preText_end">End:</string>
+
     <string name="eventOccurrencesScreen_emptyView">There are no occurrences for this event</string>
     <string name="eventOccurrencesScreen_deleteConfirmation">Are you sure you want to delete this occurrence?</string>
-    <string name="start">Start:</string>
-    <string name="end">End:</string>
-    <string name="select">Select</string>
+
+    <string name="set">Set</string>
     <string name="remove">Remove</string>
+    <string name="setDate">Set date</string>
+    <string name="setTime">Set time</string>
 </resources>

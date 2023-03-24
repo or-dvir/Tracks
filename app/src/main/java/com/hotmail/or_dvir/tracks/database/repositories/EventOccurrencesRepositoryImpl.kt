@@ -3,7 +3,7 @@ package com.hotmail.or_dvir.tracks.database.repositories
 import com.hotmail.or_dvir.tracks.database.daos.EventOccurrencesDao
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.toEntity
-import com.hotmail.or_dvir.tracks.toEventOccurrence
+import com.hotmail.or_dvir.tracks.toEventOccurrences
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -17,9 +17,11 @@ class EventOccurrencesRepositoryImpl @Inject constructor(
 ) : EventOccurrencesRepository {
 
     // todo for now assume all operations are successful
-    
+
     override fun getAllByStartDateDesc(eventId: Int): Flow<List<EventOccurrence>> =
-        dao.getAllByStartDateDesc(eventId).map { it.toEventOccurrence() }
+        dao.getAll(eventId).map { entities ->
+            entities.toEventOccurrences().sortedByDescending { it.startDate }
+        }
 
     override suspend fun insert(occurrence: EventOccurrence): Long {
         return shouldNotBeCancelled(

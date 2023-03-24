@@ -1,21 +1,25 @@
 package com.hotmail.or_dvir.tracks.database.entities
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.Month
 
 @Entity(tableName = EventOccurrenceEntity.TABLE_NAME)
 data class EventOccurrenceEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = COLUMN_ID)
     val id: Int,
-    @ColumnInfo(name = COLUMN_START_MILLIS)
-    val startMillis: Long,
-    @ColumnInfo(name = "endMillis")
-    val endMillis: Long?,
+    @Embedded(prefix = "start_")
+    val startDate: EventOccurrenceDate,
+    @Embedded(prefix = "start_")
+    val startTime: EventOccurrenceTime?,
+    @Embedded(prefix = "end_")
+    val endDate: EventOccurrenceDate?,
+    @Embedded(prefix = "end_")
+    val endTime: EventOccurrenceTime?,
     @ColumnInfo(name = "note")
-    val note: String?,
+    val note: String,
     @ColumnInfo(name = COLUMN_EVENT_ID)
     // todo do i need to annotate this with @ForeignKey???
     val eventId: Int
@@ -24,12 +28,21 @@ data class EventOccurrenceEntity(
         const val TABLE_NAME = "TrackedEventsInstances"
         const val COLUMN_ID = "id"
         const val COLUMN_EVENT_ID = "eventId"
-        const val COLUMN_START_MILLIS = "startMillis"
     }
 }
 
-private data class Date(
+data class EventOccurrenceDate(
+    @ColumnInfo(name = "year")
     val year: Int,
-    val Month: String,
+    @ColumnInfo(name = "month")
+    val month: String,
+    @ColumnInfo(name = "dayOfMonth")
     val dayOfMonth: Int
+)
+
+data class EventOccurrenceTime(
+    @ColumnInfo(name = "hourOfDay")
+    val hourOfDay: Int,
+    @ColumnInfo(name = "minute")
+    val minute: Int,
 )
