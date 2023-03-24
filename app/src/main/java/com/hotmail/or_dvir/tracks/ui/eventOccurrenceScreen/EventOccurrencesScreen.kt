@@ -440,7 +440,10 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         val updatedOccurrence by rememberUpdatedState(occurrence)
 
         SwipeToDelete(
-            onDeleteRequested = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
+            onDeleteRequest = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
+            onEditRequest = {
+                //todo
+            }
         ) {
             Row(
                 modifier = Modifier

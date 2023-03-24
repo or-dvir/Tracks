@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
-import androidx.compose.material.DismissValue.DismissedToStart
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
@@ -28,13 +27,16 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -69,20 +71,23 @@ fun DeleteConfirmationDialog(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun LazyItemScope.SwipeToDelete(
-    onDeleteRequested: () -> Unit,
+    onDeleteRequest: () -> Unit,
+    onEditRequest: () -> Unit,
     dismissContent: @Composable RowScope.() -> Unit
 ) {
     val deleteDirection by remember { mutableStateOf(DismissDirection.StartToEnd) }
     val deleteDismissValue by remember { mutableStateOf(DismissValue.DismissedToEnd) }
-    //todo add option for endToStart swiping
+
+    val editDirection by remember { mutableStateOf(DismissDirection.EndToStart) }
+    val editDismissValue by remember { mutableStateOf(DismissValue.DismissedToStart) }
 
     val dismissState = rememberDismissState(
         confirmStateChange = {
+            //do NOT change this with if-else statement! there are other options
+            //for DismissValue which we need to ignore!
             when (it) {
-                deleteDismissValue -> onDeleteRequested()
-                DismissedToStart -> {
-                    //todo when adding option for second swipe direction
-                }
+                deleteDismissValue -> onDeleteRequest()
+                editDismissValue -> onEditRequest()
                 else -> { /* do nothing. */
                 }
             }
@@ -100,28 +105,49 @@ fun LazyItemScope.SwipeToDelete(
             .animateItemPlacement(),
         dismissThresholds = { FractionalThreshold(0.5f) },
         state = dismissState,
-        directions = setOf(deleteDirection),
+        directions = setOf(deleteDirection, editDirection),
         dismissContent = dismissContent,
         background = {
             //should help with performance
-            dismissState.dismissDirection?.apply {
-                if (this == deleteDirection) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Red)
-                            .padding(start = 16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Delete,
-                            contentDescription = null
-                        )
+            dismissState.dismissDirection?.let {
+                when (it) {
+                    deleteDirection -> swipeBackground(
+                        color = Color.Red,
+                        imageVector = Icons.Filled.Delete,
+                        imageArrangement = Arrangement.Start
+                    )
+                    editDirection -> swipeBackground(
+                        color = MaterialTheme.colors.secondaryVariant,
+                        imageVector = Icons.Filled.Edit,
+                        imageArrangement = Arrangement.End
+                    )
+                    else -> { /*do nothing*/
                     }
                 }
             }
         }
     )
+}
+
+@Composable
+private fun swipeBackground(
+    color: Color,
+    imageVector: ImageVector,
+    imageArrangement: Arrangement.Horizontal
+) {
+    Row(
+        horizontalArrangement = imageArrangement,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color)
+            .padding(horizontal = 16.dp)
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable

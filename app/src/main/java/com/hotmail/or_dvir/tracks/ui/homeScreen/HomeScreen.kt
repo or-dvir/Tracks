@@ -227,7 +227,10 @@ class HomeScreen : Screen {
         val updatedEvent by rememberUpdatedState(event)
 
         SwipeToDelete(
-            onDeleteRequested = { onUserEvent(OnDeleteEvent(updatedEvent.id)) },
+            onDeleteRequest = { onUserEvent(OnDeleteEvent(updatedEvent.id)) },
+            onEditRequest = {
+                //todo
+            }
         ) {
             val navigator = LocalNavigator.currentOrThrow
             Row(
