@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -208,7 +209,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 // todo
                 //  make outlined???
                 TextField(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 290.dp),
                     value = note,
                     onValueChange = { note = it },
                     label = { Text(stringResource(R.string.hint_note)) }
