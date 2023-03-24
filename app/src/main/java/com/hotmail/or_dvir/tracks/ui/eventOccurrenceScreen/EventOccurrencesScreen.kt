@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -379,17 +380,32 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             onDeleteRequested = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
                     .padding(16.dp)
             ) {
-                if (occurrence.hasEndDateTime) {
-                    OccurrenceColumnFromUntil()
-                }
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    ) {
+                        if (occurrence.hasEndDateTime) {
+                            OccurrenceColumnFromUntil()
+                        }
 
-                OccurrenceColumnStartEndDateTime(occurrence)
+                        OccurrenceColumnStartEndDateTime(occurrence)
+                    }
+
+                    // todo test a very long note. should i limit the height and make it scrollable?
+                    occurrence.note.takeIf { it.isNotBlank() }?.let {
+                        Spacer(Modifier.height(5.dp))
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = it,
+                            style = MaterialTheme.typography.body2
+                        )
+                    }
+                }
             }
         }
     }
