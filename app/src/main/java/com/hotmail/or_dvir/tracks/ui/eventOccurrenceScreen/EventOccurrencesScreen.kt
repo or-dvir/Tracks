@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -175,7 +176,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             }
         ) {
             Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // start date/time
@@ -193,7 +194,13 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 )
 
                 // end date/time
-                //todo
+                StartEndDateTimeRow(
+                    preText = R.string.preText_end,
+                    selectedDate = endDate,
+                    selectedTime = endTime,
+                    onDateChanged = { endDate = it },
+                    onTimeChanged = { endTime = it },
+                )
 
                 // note
                 // todo
@@ -368,6 +375,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             onDeleteRequested = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
         ) {
             Row(
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
@@ -375,8 +383,28 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 // todo do i need this?
 //                verticalAlignment = Alignment.CenterVertically
             ) {
-                // todo update me
-                Text(occurrence.startDate.toUserFriendlyText())
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    occurrence.apply {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            Text(startDate.toUserFriendlyText())
+                            startTime?.let { Text(it.toUserFriendlyText()) }
+                        }
+
+                        if(listOf<Any?>(endDate, endTime).any { it != null }) {
+                            Text(stringResource(R.string.until))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                endDate?.let { Text(it.toUserFriendlyText()) }
+                                endTime?.let { Text(it.toUserFriendlyText()) }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
