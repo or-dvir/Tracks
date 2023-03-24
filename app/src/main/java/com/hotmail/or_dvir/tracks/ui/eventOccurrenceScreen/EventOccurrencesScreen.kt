@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -184,12 +185,15 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // todo align the dates text to the start of the longest word "start:" or "end:"
                 // start date/time
                 StartEndDateTimeRow(
                     preText = R.string.preText_start,
                     // an occurrence must at least have a start date
                     removableStartDate = false,
                     selectedDate = startDate,
+                    minSelectableDate = LocalDate.MIN,
+                    maxSelectableDate = endDate ?: LocalDate.MAX,
                     selectedTime = startTime,
                     onDateChanged = {
                         //since we set removableStartDate to `false`, `it` should not be null here
@@ -202,14 +206,15 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 StartEndDateTimeRow(
                     preText = R.string.preText_end,
                     selectedDate = endDate,
+                    minSelectableDate = startDate,
+                    maxSelectableDate = LocalDate.MAX,
                     selectedTime = endTime,
                     onDateChanged = { endDate = it },
                     onTimeChanged = { endTime = it },
                 )
 
                 // note
-                // todo
-                //  make outlined???
+                // todo make outlined???
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -226,6 +231,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     private fun StartEndDateTimeRow(
         @StringRes preText: Int,
         selectedDate: LocalDate?,
+        minSelectableDate: LocalDate,
+        maxSelectableDate: LocalDate,
         selectedTime: LocalTime?,
         onDateChanged: (LocalDate?) -> Unit,
         onTimeChanged: (LocalTime?) -> Unit,
@@ -279,10 +286,18 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 }
             },
         ) {
+            val selectableDates by remember {
+                derivedStateOf { minSelectableDate..maxSelectableDate }
+            }
+
             datepicker(
                 title = "",
                 onDateChange = onDateChanged,
-                initialDate = selectedDate ?: LocalDate.now()
+                initialDate = selectedDate ?: LocalDate.now(),
+                // todo might have to add "equal to"
+                allowedDateValidator = {
+                    selectableDates.contains(it)
+                }
             )
         }
 
