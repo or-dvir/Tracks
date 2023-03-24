@@ -156,8 +156,11 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         onDismiss: () -> Unit
     ) {
         var startDate: LocalDate by remember { mutableStateOf(LocalDate.now()) }
-        var startTime: LocalTime? by remember { mutableStateOf(null) }
         var endDate: LocalDate? by remember { mutableStateOf(null) }
+        val areStartEndSameDay by remember {
+            derivedStateOf { endDate?.isEqual(startDate) == true }
+        }
+        var startTime: LocalTime? by remember { mutableStateOf(null) }
         var endTime: LocalTime? by remember { mutableStateOf(null) }
         var note: String by remember { mutableStateOf("") }
 
@@ -185,6 +188,30 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val selectableStartTimeRange by remember {
+                    derivedStateOf {
+                        val maxStartTime = if (!areStartEndSameDay) {
+                            LocalTime.MAX
+                        } else {
+                            endTime ?: LocalTime.MAX
+                        }
+
+                        LocalTime.MIN..maxStartTime
+                    }
+                }
+
+                val selectableEndTimeRange by remember {
+                    derivedStateOf {
+                        val minEndTime = if (!areStartEndSameDay) {
+                            LocalTime.MIN
+                        } else {
+                            startTime ?: LocalTime.MIN
+                        }
+
+                        minEndTime..LocalTime.MAX
+                    }
+                }
+
                 // todo align the dates text to the start of the longest word "start:" or "end:"
                 // start date/time
                 StartEndDateTimeRow(
@@ -195,11 +222,12 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     minSelectableDate = LocalDate.MIN,
                     maxSelectableDate = endDate ?: LocalDate.MAX,
                     selectedTime = startTime,
+                    selectableTimeRange = selectableStartTimeRange,
+                    onTimeChanged = { startTime = it },
                     onDateChanged = {
                         //since we set removableStartDate to `false`, `it` should not be null here
                         startDate = it!!
-                    },
-                    onTimeChanged = { startTime = it },
+                    }
                 )
 
                 // end date/time
@@ -209,8 +237,9 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     minSelectableDate = startDate,
                     maxSelectableDate = LocalDate.MAX,
                     selectedTime = endTime,
+                    selectableTimeRange = selectableEndTimeRange,
                     onDateChanged = { endDate = it },
-                    onTimeChanged = { endTime = it },
+                    onTimeChanged = { endTime = it }
                 )
 
                 // note
@@ -234,12 +263,12 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         minSelectableDate: LocalDate,
         maxSelectableDate: LocalDate,
         selectedTime: LocalTime?,
+        selectableTimeRange: ClosedRange<LocalTime>,
         onDateChanged: (LocalDate?) -> Unit,
         onTimeChanged: (LocalTime?) -> Unit,
         removableStartDate: Boolean = true
     ) {
         // todo
-        //  do not allow to pick end date BEFORE start date
         //  do not allow to pick end time BEFORE start time
         val datePickerState = rememberMaterialDialogState()
         val timePickerState = rememberMaterialDialogState()
@@ -320,6 +349,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             },
         ) {
             timepicker(
+                timeRange = selectableTimeRange,
                 is24HourClock = true,
                 title = "",
                 onTimeChange = onTimeChanged,
