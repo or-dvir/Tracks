@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen
 
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -122,8 +123,19 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 }
 
                 if (showNewEditOccurrenceDialog) {
+                    val context = LocalContext.current
                     NewEditOccurrenceDialog(
-                        onUserEvent = viewModel::onUserEvent,
+                        onUserEvent = { userEvent ->
+                            if (userEvent is OnCreateNewOccurrence) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.occurrenceAdded,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            viewModel.onUserEvent(userEvent)
+                        },
                         onDismiss = { showNewEditOccurrenceDialog = false }
                     )
                 }
@@ -355,7 +367,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         SwipeToDelete(
             onDeleteRequested = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
         ) {
-            val navigator = LocalNavigator.currentOrThrow
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
