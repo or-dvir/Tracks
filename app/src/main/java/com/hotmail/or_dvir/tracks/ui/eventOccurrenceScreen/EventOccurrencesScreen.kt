@@ -169,9 +169,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         //loophole: if the user selects an endTime before an endDate, there can be a scenario
         //where the end date/time will be BEFORE the start date/time
         val errorEndTimeBeforeStartTime by remember {
-            derivedStateOf {
-                areStartEndSameDay && endTime.isBefore(startTime)
-            }
+            derivedStateOf { areStartEndSameDay && endTime.isBefore(startTime) }
         }
 
         TracksDialog(
@@ -224,6 +222,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 }
 
                 // todo align the dates text to the start of the longest word "start:" or "end:"
+                //  because of the error text, looks like the only way to do this is to use
+                //  constraint layout... do it later
                 // start date/time
                 StartEndDateTimeRow(
                     preText = R.string.preText_start,
