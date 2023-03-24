@@ -385,46 +385,54 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     .background(MaterialTheme.colors.surface)
                     .padding(16.dp)
             ) {
-                occurrence.apply {
-                    val hasEndDateTime = listOf<Any?>(endDate, endTime).any { it != null }
-                    if (hasEndDateTime) {
-                        Column(
-                            modifier = Modifier.width(IntrinsicSize.Max)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(stringResource(R.string.from))
-                                Text(":")
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth(),
-                            ) {
-                                Text(stringResource(R.string.until))
-                                Text(":")
-                            }
-                        }
-                    }
+                if (occurrence.hasEndDateTime) {
+                    OccurrenceColumnFromUntil()
+                }
 
-                    Column {
-                        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text(startDate.toUserFriendlyText())
-                            startTime?.let { Text(it.toUserFriendlyText()) }
-                        }
-                        if (hasEndDateTime) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                                endDate?.let { Text(it.toUserFriendlyText()) }
-                                endTime?.let { Text(it.toUserFriendlyText()) }
-                            }
-                        }
+                OccurrenceColumnStartEndDateTime(occurrence)
+            }
+        }
+    }
+
+    @Composable
+    private fun OccurrenceColumnStartEndDateTime(occurrence: EventOccurrence) {
+        occurrence.apply {
+            Column {
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    Text(startDate.toUserFriendlyText())
+                    startTime?.let { Text(it.toUserFriendlyText()) }
+                }
+                if (hasEndDateTime) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                        endDate?.let { Text(it.toUserFriendlyText()) }
+                        endTime?.let { Text(it.toUserFriendlyText()) }
                     }
                 }
             }
         }
     }
 
+    @Composable
+    private fun OccurrenceColumnFromUntil() {
+        Column(
+            modifier = Modifier.width(IntrinsicSize.Max)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(stringResource(R.string.from))
+                Text(":")
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stringResource(R.string.until))
+                Text(":")
+            }
+        }
+    }
     //todo why aren't previews working?!
 //    @Preview(showBackground = true)
 //    @Composable
