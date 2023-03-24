@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -382,26 +383,38 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
-                    .padding(16.dp),
-                // todo do i need this?
-//                verticalAlignment = Alignment.CenterVertically
+                    .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    occurrence.apply {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                occurrence.apply {
+                    val hasEndDateTime = listOf<Any?>(endDate, endTime).any { it != null }
+                    if (hasEndDateTime) {
+                        Column(
+                            modifier = Modifier.width(IntrinsicSize.Max)
                         ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(stringResource(R.string.from))
+                                Text(":")
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(stringResource(R.string.until))
+                                Text(":")
+                            }
+                        }
+                    }
+
+                    Column {
+                        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                             Text(startDate.toUserFriendlyText())
                             startTime?.let { Text(it.toUserFriendlyText()) }
                         }
-
-                        if(listOf<Any?>(endDate, endTime).any { it != null }) {
-                            Text(stringResource(R.string.until))
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(5.dp)
-                            ) {
+                        if (hasEndDateTime) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                                 endDate?.let { Text(it.toUserFriendlyText()) }
                                 endTime?.let { Text(it.toUserFriendlyText()) }
                             }

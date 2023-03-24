@@ -32,5 +32,6 @@
     <string name="remove">Remove</string>
     <string name="setDate">Set date</string>
     <string name="setTime">Set time</string>
+    <string name="from">From</string>
     <string name="until">Until</string>
 </resources>
