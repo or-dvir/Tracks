@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
@@ -193,11 +192,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     onValueChange = { note = it },
                     label = { Text(stringResource(R.string.hint_note)) }
                 )
-
-                //todo
-                //  start time millis
-                //  end time millis - with option to remove
-                //  note
             }
         }
     }
@@ -211,10 +205,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         onTimeChanged: (LocalTime?) -> Unit,
         removableStartDate: Boolean = true
     ) {
-        // todo
-        //  option to remove date (but only for end)
-        //  option to remove time (both for start/end)
-
         val datePickerState = rememberMaterialDialogState()
         val timePickerState = rememberMaterialDialogState()
 
@@ -309,9 +299,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         eventOccurrences: List<EventOccurrence>,
         onUserEvent: OnUserEvent
     ) {
-        // todo
-        //  FAB to add new occurrence
-
         val dummyOccurrenceId by remember { mutableStateOf(-1) }
         // first - should show dialog
         // second - event id to delete
