@@ -20,7 +20,10 @@ class EventOccurrencesRepositoryImpl @Inject constructor(
 
     override fun getAllByStartDateDesc(eventId: Int): Flow<List<EventOccurrence>> =
         dao.getAll(eventId).map { entities ->
-            entities.toEventOccurrences().sortedByDescending { it.startDate }
+            entities.toEventOccurrences().sortedWith(
+                compareByDescending<EventOccurrence> { it.startDate }
+                    .thenByDescending { it.startTime }
+            )
         }
 
     override suspend fun insert(occurrence: EventOccurrence): Long {
