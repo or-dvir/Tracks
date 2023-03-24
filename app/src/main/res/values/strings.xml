@@ -12,9 +12,11 @@
     <string name="hint_eventName">Event name</string>
     <string name="hint_note">Note</string>
 
+    <string name="error_eventNameMustNotBeEmpty">Event name cannot be empty</string>
+    <string name="error_endTimeBeforeStartTime">End time cannot be before Start time</string>
+
     <string name="create">create</string>
     <string name="cancel">Cancel</string>
-    <string name="error_eventNameMustNotBeEmpty">Event name cannot be empty</string>
     <string name="delete">Delete</string>
     <string name="occurrenceAdded">Occurrence added</string>
 

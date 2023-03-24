@@ -45,6 +45,7 @@ import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
+import com.hotmail.or_dvir.tracks.ui.ErrorText
 import com.hotmail.or_dvir.tracks.ui.SwipeToDelete
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
@@ -190,12 +191,11 @@ class HomeScreen : Screen {
         TracksDialog(
             titleRes = R.string.dialogTitle_newTrackableEvent,
             positiveButtonRes = R.string.create,
+            positiveButtonEnabled = !isError,
             onDismiss = onDismiss,
             onPositiveButtonClick = {
-                if (!isError) {
-                    onUserEvent(UserEvent.OnCreateNewEvent(userInput))
-                    onDismiss()
-                }
+                onUserEvent(UserEvent.OnCreateNewEvent(userInput))
+                onDismiss()
             }
         ) {
             Column(
@@ -213,15 +213,7 @@ class HomeScreen : Screen {
                 )
 
                 if (isError) {
-                    Text(
-                        text = stringResource(R.string.error_eventNameMustNotBeEmpty),
-                        color = MaterialTheme.colors.error,
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            top = 5.dp
-                        )
-                    )
+                    ErrorText(R.string.error_eventNameMustNotBeEmpty)
                 }
             }
         }

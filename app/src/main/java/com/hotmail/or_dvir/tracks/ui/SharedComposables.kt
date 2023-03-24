@@ -125,9 +125,22 @@ fun LazyItemScope.SwipeToDelete(
 }
 
 @Composable
+fun ErrorText(
+    @StringRes errorRes: Int
+) {
+    Text(
+        text = stringResource(errorRes),
+        color = MaterialTheme.colors.error,
+        style = MaterialTheme.typography.caption,
+        modifier = Modifier.padding(start = 16.dp, top = 5.dp)
+    )
+}
+
+@Composable
 fun TracksDialog(
     @StringRes titleRes: Int,
     @StringRes positiveButtonRes: Int,
+    positiveButtonEnabled: Boolean,
     onPositiveButtonClick: () -> Unit,
     onDismiss: () -> Unit,
     @StringRes negativeButtonRes: Int = R.string.cancel,
@@ -169,8 +182,9 @@ fun TracksDialog(
                         Text(stringResource(negativeButtonRes))
                     }
 
-                    //negative button
+                    //positive button
                     TextButton(
+                        enabled = positiveButtonEnabled,
                         onClick = onPositiveButtonClick
                     ) {
                         Text(stringResource(positiveButtonRes))

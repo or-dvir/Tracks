@@ -39,6 +39,16 @@ fun LocalDateTime.toUserFriendlyText() = this.format(dateTimeFormatter)
 fun LocalDate.toUserFriendlyText() = this.format(dateFormatter)
 fun LocalTime.toUserFriendlyText() = this.format(timeFormatter)
 
+/**
+ * same as [LocalTime.isBefore], but can handle nulls
+ */
+fun LocalTime?.isBefore(other: LocalTime?) =
+    if (this == null || other == null) {
+        false
+    } else {
+        this.isBefore(other)
+    }
+
 fun Long.millisToLocalDateTime() = this.millisToZonedDateTime().toLocalDateTime()
 fun Long.millisToLocalDate() = this.millisToZonedDateTime().toLocalDate()
 fun Long.millisToLocalTime() = this.millisToZonedDateTime().toLocalTime()

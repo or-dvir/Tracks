@@ -51,10 +51,12 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
+import com.hotmail.or_dvir.tracks.isBefore
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.toUserFriendlyText
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
+import com.hotmail.or_dvir.tracks.ui.ErrorText
 import com.hotmail.or_dvir.tracks.ui.SwipeToDelete
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.EventOccurrenceData
@@ -164,10 +166,19 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         var endTime: LocalTime? by remember { mutableStateOf(null) }
         var note: String by remember { mutableStateOf("") }
 
+        //loophole: if the user selects an endTime before an endDate, there can be a scenario
+        //where the end date/time will be BEFORE the start date/time
+        val errorEndTimeBeforeStartTime by remember {
+            derivedStateOf {
+                areStartEndSameDay && endTime.isBefore(startTime)
+            }
+        }
+
         TracksDialog(
             titleRes = R.string.dialogTitle_newOccurrence,
             positiveButtonRes = R.string.create,
             onDismiss = onDismiss,
+            positiveButtonEnabled = !errorEndTimeBeforeStartTime,
             onPositiveButtonClick = {
                 onUserEvent(
                     OnCreateNewOccurrence(
@@ -230,17 +241,24 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     }
                 )
 
-                // end date/time
-                StartEndDateTimeRow(
-                    preText = R.string.preText_end,
-                    selectedDate = endDate,
-                    minSelectableDate = startDate,
-                    maxSelectableDate = LocalDate.MAX,
-                    selectedTime = endTime,
-                    selectableTimeRange = selectableEndTimeRange,
-                    onDateChanged = { endDate = it },
-                    onTimeChanged = { endTime = it }
-                )
+                // end date/time. wrapper in extra Column so that the error appears right beneath it
+                //(ignores the "spacedBy" of the containing column
+                Column {
+                    StartEndDateTimeRow(
+                        preText = R.string.preText_end,
+                        selectedDate = endDate,
+                        minSelectableDate = startDate,
+                        maxSelectableDate = LocalDate.MAX,
+                        selectedTime = endTime,
+                        selectableTimeRange = selectableEndTimeRange,
+                        onDateChanged = { endDate = it },
+                        onTimeChanged = { endTime = it }
+                    )
+
+                    if (errorEndTimeBeforeStartTime) {
+                        ErrorText(R.string.error_endTimeBeforeStartTime)
+                    }
+                }
 
                 // note
                 // todo make outlined???
