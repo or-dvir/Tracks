@@ -101,7 +101,6 @@ class HomeScreen : Screen {
                     EmptyContent()
                 } else {
                     val context = LocalContext.current
-
                     NonEmptyContent(
                         trackedEvents = trackedEvents,
                         onUserEvent = { userEvent ->
