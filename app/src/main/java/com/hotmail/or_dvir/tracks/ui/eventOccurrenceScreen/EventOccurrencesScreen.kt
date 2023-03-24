@@ -224,6 +224,9 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         onTimeChanged: (LocalTime?) -> Unit,
         removableStartDate: Boolean = true
     ) {
+        // todo
+        //  do not allow to pick end date BEFORE start date
+        //  do not allow to pick end time BEFORE start time
         val datePickerState = rememberMaterialDialogState()
         val timePickerState = rememberMaterialDialogState()
 
