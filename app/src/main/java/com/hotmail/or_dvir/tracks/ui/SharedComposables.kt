@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.tracks.R
 
 @Composable
@@ -132,12 +133,14 @@ fun TracksDialog(
     @StringRes negativeButtonRes: Int = R.string.cancel,
     content: @Composable () -> Unit
 ) {
-    // todo the dialog does not expand/collapse height-wise according to content
-    //  this is a GOOGLE bug!!! find a workaround on the internet...
     Dialog(
+        properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onDismiss
     ) {
-        Surface(shape = RoundedCornerShape(5.dp)) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(0.9f),
+            shape = RoundedCornerShape(5.dp)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
