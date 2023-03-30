@@ -51,7 +51,6 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
-import com.hotmail.or_dvir.tracks.isBefore
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.toUserFriendlyText
@@ -153,123 +152,114 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     }
 
     @Composable
+    private fun rememberNewEditOccurrenceState() = remember { NewEditOccurrenceState() }
+
+
+    @Composable
     private fun NewEditOccurrenceDialog(
         onUserEvent: OnUserEvent,
         onDismiss: () -> Unit
     ) {
-        var startDate: LocalDate by remember { mutableStateOf(LocalDate.now()) }
-        var endDate: LocalDate? by remember { mutableStateOf(null) }
-        val areStartEndSameDay by remember {
-            derivedStateOf { endDate?.isEqual(startDate) == true }
-        }
-        var startTime: LocalTime? by remember { mutableStateOf(null) }
-        var endTime: LocalTime? by remember { mutableStateOf(null) }
-        var note: String by remember { mutableStateOf("") }
-
-        //loophole: if the user selects an endTime before an endDate, there can be a scenario
-        //where the end date/time will be BEFORE the start date/time
-        val errorEndTimeBeforeStartTime by remember {
-            derivedStateOf { areStartEndSameDay && endTime.isBefore(startTime) }
-        }
-
-        TracksDialog(
-            titleRes = R.string.dialogTitle_newOccurrence,
-            positiveButtonRes = R.string.create,
-            onDismiss = onDismiss,
-            positiveButtonEnabled = !errorEndTimeBeforeStartTime,
-            onPositiveButtonClick = {
-                onUserEvent(
-                    OnCreateNewOccurrence(
-                        EventOccurrenceData(
-                            startDate = startDate,
-                            startTime = startTime,
-                            endDate = endDate,
-                            endTime = endTime,
-                            note = note
+        rememberNewEditOccurrenceState().apply {
+            TracksDialog(
+                titleRes = R.string.dialogTitle_newOccurrence,
+                positiveButtonRes = R.string.create,
+                onDismiss = onDismiss,
+                positiveButtonEnabled = !errorEndTimeBeforeStartTime,
+                onPositiveButtonClick = {
+                    onUserEvent(
+                        OnCreateNewOccurrence(
+                            EventOccurrenceData(
+                                startDate = startDate,
+                                startTime = startTime,
+                                endDate = endDate,
+                                endTime = endTime,
+                                note = note
+                            )
                         )
                     )
-                )
 
-                onDismiss()
-            }
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                modifier = Modifier.fillMaxWidth()
+                    onDismiss()
+                }
             ) {
-                val selectableStartTimeRange by remember {
-                    derivedStateOf {
-                        val maxStartTime = if (!areStartEndSameDay) {
-                            LocalTime.MAX
-                        } else {
-                            endTime ?: LocalTime.MAX
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val selectableStartTimeRange by remember {
+                        derivedStateOf {
+                            val maxStartTime = if (!areStartEndSameDay) {
+                                LocalTime.MAX
+                            } else {
+                                endTime ?: LocalTime.MAX
+                            }
+
+                            LocalTime.MIN..maxStartTime
                         }
-
-                        LocalTime.MIN..maxStartTime
                     }
-                }
 
-                val selectableEndTimeRange by remember {
-                    derivedStateOf {
-                        val minEndTime = if (!areStartEndSameDay) {
-                            LocalTime.MIN
-                        } else {
-                            startTime ?: LocalTime.MIN
+                    val selectableEndTimeRange by remember {
+                        derivedStateOf {
+                            val minEndTime = if (!areStartEndSameDay) {
+                                LocalTime.MIN
+                            } else {
+                                startTime ?: LocalTime.MIN
+                            }
+
+                            minEndTime..LocalTime.MAX
                         }
-
-                        minEndTime..LocalTime.MAX
                     }
-                }
 
-                // todo align the dates text to the start of the longest word "start:" or "end:"
-                //  because of the error text, looks like the only way to do this is to use
-                //  constraint layout... do it later
-                // start date/time
-                StartEndDateTimeRow(
-                    preText = R.string.preText_start,
-                    // an occurrence must at least have a start date
-                    removableStartDate = false,
-                    selectedDate = startDate,
-                    minSelectableDate = LocalDate.MIN,
-                    maxSelectableDate = endDate ?: LocalDate.MAX,
-                    selectedTime = startTime,
-                    selectableTimeRange = selectableStartTimeRange,
-                    onTimeChanged = { startTime = it },
-                    onDateChanged = {
-                        //since we set removableStartDate to `false`, `it` should not be null here
-                        startDate = it!!
-                    }
-                )
-
-                // end date/time. wrapper in extra Column so that the error appears right beneath it
-                //(ignores the "spacedBy" of the containing column
-                Column {
+                    // todo align the dates text to the start of the longest word "start:" or "end:"
+                    //  because of the error text, looks like the only way to do this is to use
+                    //  constraint layout... do it later
+                    // start date/time
                     StartEndDateTimeRow(
-                        preText = R.string.preText_end,
-                        selectedDate = endDate,
-                        minSelectableDate = startDate,
-                        maxSelectableDate = LocalDate.MAX,
-                        selectedTime = endTime,
-                        selectableTimeRange = selectableEndTimeRange,
-                        onDateChanged = { endDate = it },
-                        onTimeChanged = { endTime = it }
+                        preText = R.string.preText_start,
+                        // an occurrence must at least have a start date
+                        removableStartDate = false,
+                        selectedDate = startDate,
+                        minSelectableDate = LocalDate.MIN,
+                        maxSelectableDate = endDate ?: LocalDate.MAX,
+                        selectedTime = startTime,
+                        selectableTimeRange = selectableStartTimeRange,
+                        onTimeChanged = { startTime = it },
+                        onDateChanged = {
+                            //since we set removableStartDate to `false`, `it` should not be null here
+                            startDate = it!!
+                        }
                     )
 
-                    if (errorEndTimeBeforeStartTime) {
-                        ErrorText(R.string.error_endTimeBeforeStartTime)
-                    }
-                }
+                    // end date/time. wrapper in extra Column so that the error appears right beneath it
+                    //(ignores the "spacedBy" of the containing column
+                    Column {
+                        StartEndDateTimeRow(
+                            preText = R.string.preText_end,
+                            selectedDate = endDate,
+                            minSelectableDate = startDate,
+                            maxSelectableDate = LocalDate.MAX,
+                            selectedTime = endTime,
+                            selectableTimeRange = selectableEndTimeRange,
+                            onDateChanged = { endDate = it },
+                            onTimeChanged = { endTime = it }
+                        )
 
-                // note
-                // todo make outlined???
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 290.dp),
-                    value = note,
-                    onValueChange = { note = it },
-                    label = { Text(stringResource(R.string.hint_note)) }
-                )
+                        if (errorEndTimeBeforeStartTime) {
+                            ErrorText(R.string.error_endTimeBeforeStartTime)
+                        }
+                    }
+
+                    // note
+                    // todo make outlined???
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 290.dp),
+                        value = note,
+                        onValueChange = { note = it },
+                        label = { Text(stringResource(R.string.hint_note)) }
+                    )
+                }
             }
         }
     }
