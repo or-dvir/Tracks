@@ -116,12 +116,12 @@ fun LazyItemScope.SwipeToDelete(
             //should help with performance
             dismissState.dismissDirection?.let {
                 when (it) {
-                    deleteDirection -> swipeBackground(
+                    deleteDirection -> SwipeBackground(
                         color = Color.Red,
                         imageVector = Icons.Filled.Delete,
                         imageArrangement = Arrangement.Start
                     )
-                    editDirection -> swipeBackground(
+                    editDirection -> SwipeBackground(
                         color = MaterialTheme.colors.secondaryVariant,
                         imageVector = Icons.Filled.Edit,
                         imageArrangement = Arrangement.End
