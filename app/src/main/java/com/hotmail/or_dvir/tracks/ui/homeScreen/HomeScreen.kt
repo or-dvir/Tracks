@@ -51,6 +51,7 @@ import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
+import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 
 // todo
 //  delete trackable event
@@ -144,10 +145,7 @@ class HomeScreen : Screen {
         trackedEvents: List<TrackedEvent>,
         onUserEvent: OnUserEvent
     ) {
-        val dummyEventId by remember { mutableStateOf(-1) }
-        // first - should show dialog
-        // second - event id to delete
-        var showDeleteConfirmationDialog by remember { mutableStateOf(Pair(false, dummyEventId)) }
+        val deleteConfirmationState = rememberDeleteConfirmationDialogState()
 
         LazyColumn {
             itemsIndexed(
@@ -158,7 +156,10 @@ class HomeScreen : Screen {
                     event = trackedEvent,
                     onUserEvent = { userEvent ->
                         if (userEvent is OnDeleteEvent) {
-                            showDeleteConfirmationDialog = Pair(true, userEvent.eventId)
+                            deleteConfirmationState.apply {
+                                show = true
+                                objToDeleteId = userEvent.eventId
+                            }
                         } else {
                             onUserEvent(userEvent)
                         }
@@ -171,13 +172,12 @@ class HomeScreen : Screen {
             }
         }
 
-        showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
-            DeleteConfirmationDialog(
-                messageRes = R.string.homeScreen_deleteConfirmation,
-                onConfirm = { onUserEvent(OnDeleteEvent(second)) },
-                onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyEventId) }
-            )
-        }
+        DeleteConfirmationDialog(
+            state = deleteConfirmationState,
+            messageRes = R.string.homeScreen_deleteConfirmation,
+            onConfirm = { onUserEvent(OnDeleteEvent(deleteConfirmationState.objToDeleteId)) },
+            onDismiss = { deleteConfirmationState.reset() }
+        )
     }
 
     @Composable

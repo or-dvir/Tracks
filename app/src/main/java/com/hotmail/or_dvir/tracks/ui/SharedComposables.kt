@@ -45,10 +45,15 @@ import com.example.tracks.R
 
 @Composable
 fun DeleteConfirmationDialog(
+    state: DeleteConfirmationDialogState,
     @StringRes messageRes: Int,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    if(!state.show) {
+        return
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
