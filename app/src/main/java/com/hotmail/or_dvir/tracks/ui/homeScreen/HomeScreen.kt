@@ -72,7 +72,7 @@ class HomeScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel = getViewModel<HomeScreenViewModel>()
-        var showNewEventDialog by remember { mutableStateOf(false) }
+        val newEventDialogState = rememberNewEditDialogState()
 
         Scaffold(
             topBar = {
@@ -82,7 +82,7 @@ class HomeScreen : Screen {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = { showNewEventDialog = true }) {
+                FloatingActionButton(onClick = { newEventDialogState.show = true }) {
                     Icon(
                         contentDescription = stringResource(R.string.contentDescription_addTrackedEvent),
                         imageVector = Icons.Filled.Add
@@ -120,10 +120,11 @@ class HomeScreen : Screen {
                     )
                 }
 
-                if (showNewEventDialog) {
-                    NewEventDialog(
+                newEventDialogState.apply {
+                    NewEditEventDialog(
+                        state = this,
                         onUserEvent = viewModel::onUserEvent,
-                        onDismiss = { showNewEventDialog = false }
+                        onDismiss = { show = false }
                     )
                 }
             }
@@ -183,20 +184,21 @@ class HomeScreen : Screen {
     }
 
     @Composable
-    private fun NewEventDialog(
+    private fun rememberNewEditDialogState() = remember { NewEditEventDialogState() }
+
+    @Composable
+    private fun NewEditEventDialog(
+        state: NewEditEventDialogState,
         onUserEvent: OnUserEvent,
         onDismiss: () -> Unit
     ) {
-        var userInput by remember { mutableStateOf("") }
-        var isError by remember { mutableStateOf(true) }
-
         TracksDialog(
             titleRes = R.string.dialogTitle_newTrackableEvent,
             positiveButtonRes = R.string.create,
-            positiveButtonEnabled = !isError,
+            positiveButtonEnabled = !state.isError,
             onDismiss = onDismiss,
             onPositiveButtonClick = {
-                onUserEvent(UserEvent.OnCreateNewEvent(userInput))
+                onUserEvent(UserEvent.OnCreateNewEvent(state.userInput))
                 onDismiss()
             }
         ) {
@@ -204,17 +206,14 @@ class HomeScreen : Screen {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TextField(
-                    value = userInput,
-                    onValueChange = {
-                        isError = it.isBlank()
-                        userInput = it
-                    },
+                    value = state.userInput,
+                    onValueChange = { state.userInput = it },
                     placeholder = {
                         Text(stringResource(R.string.hint_eventName))
                     }
                 )
 
-                if (isError) {
+                if (state.isError) {
                     ErrorText(R.string.error_eventNameMustNotBeEmpty)
                 }
             }
