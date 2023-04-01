@@ -256,28 +256,4 @@ class HomeScreen : Screen {
             }
         }
     }
-
-    @Preview(showBackground = true)
-    @Composable
-    private fun NewEventDialogPreview() {
-        NewEventDialog(
-            onUserEvent = {},
-            onDismiss = {}
-        )
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    private fun TrackedEventRowPreview() {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(1) {
-                TrackedEventRow(
-                    TrackedEvent(name = "event name"),
-                    onUserEvent = { }
-                )
-            }
-        }
-    }
 }
