@@ -135,7 +135,10 @@ fun LazyItemScope.SwipeToDelete(
 }
 
 @Composable
-private fun swipeBackground(
+fun rememberDeleteConfirmationDialogState() = remember { DeleteConfirmationDialogState() }
+
+@Composable
+private fun SwipeBackground(
     color: Color,
     imageVector: ImageVector,
     imageArrangement: Arrangement.Horizontal
