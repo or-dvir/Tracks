@@ -172,12 +172,14 @@ class HomeScreen : Screen {
             }
         }
 
-        DeleteConfirmationDialog(
-            state = deleteConfirmationState,
-            messageRes = R.string.homeScreen_deleteConfirmation,
-            onConfirm = { onUserEvent(OnDeleteEvent(deleteConfirmationState.objToDeleteId)) },
-            onDismiss = { deleteConfirmationState.reset() }
-        )
+        deleteConfirmationState.apply {
+            DeleteConfirmationDialog(
+                state = this,
+                messageRes = R.string.homeScreen_deleteConfirmation,
+                onConfirm = { onUserEvent(OnDeleteEvent(objToDeleteId)) },
+                onDismiss = { reset() }
+            )
+        }
     }
 
     @Composable
