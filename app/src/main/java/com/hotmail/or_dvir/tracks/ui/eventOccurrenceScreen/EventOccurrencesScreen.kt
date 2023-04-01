@@ -62,6 +62,7 @@ import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewM
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnCreateNewOccurrence
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnDeleteOccurrence
+import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
@@ -376,12 +377,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         eventOccurrences: List<EventOccurrence>,
         onUserEvent: OnUserEvent
     ) {
-        val dummyOccurrenceId by remember { mutableStateOf(-1) }
-        // first - should show dialog
-        // second - event id to delete
-        var showDeleteConfirmationDialog by remember {
-            mutableStateOf(Pair(false, dummyOccurrenceId))
-        }
+        val deleteConfirmationState = rememberDeleteConfirmationDialogState()
 
         LazyColumn {
             itemsIndexed(
@@ -392,7 +388,10 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     occurrence = occurrence,
                     onUserEvent = { userEvent ->
                         if (userEvent is OnDeleteOccurrence) {
-                            showDeleteConfirmationDialog = Pair(true, userEvent.occurrenceId)
+                            deleteConfirmationState.apply {
+                                show = true
+                                objToDeleteId = userEvent.occurrenceId
+                            }
                         } else {
                             onUserEvent(userEvent)
                         }
@@ -405,11 +404,12 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             }
         }
 
-        showDeleteConfirmationDialog.takeIf { pair -> pair.first }?.apply {
+        deleteConfirmationState.apply {
             DeleteConfirmationDialog(
+                state = this,
                 messageRes = R.string.eventOccurrencesScreen_deleteConfirmation,
-                onConfirm = { onUserEvent(OnDeleteOccurrence(second)) },
-                onDismiss = { showDeleteConfirmationDialog = Pair(false, dummyOccurrenceId) }
+                onConfirm = { onUserEvent(OnDeleteOccurrence(objToDeleteId)) },
+                onDismiss = { reset() }
             )
         }
     }
