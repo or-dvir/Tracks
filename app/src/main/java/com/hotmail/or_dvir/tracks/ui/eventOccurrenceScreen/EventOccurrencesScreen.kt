@@ -56,7 +56,7 @@ import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.toUserFriendlyText
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.ErrorText
-import com.hotmail.or_dvir.tracks.ui.SwipeToDelete
+import com.hotmail.or_dvir.tracks.ui.SwipeToDeleteOrEdit
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.EventOccurrenceData
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent
@@ -429,7 +429,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
 
         val updatedOccurrence by rememberUpdatedState(occurrence)
 
-        SwipeToDelete(
+        SwipeToDeleteOrEdit(
             onDeleteRequest = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
             onEditRequest = {
                 //todo

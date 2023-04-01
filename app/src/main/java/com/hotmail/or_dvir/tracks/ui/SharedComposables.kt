@@ -75,7 +75,7 @@ fun DeleteConfirmationDialog(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun LazyItemScope.SwipeToDelete(
+fun LazyItemScope.SwipeToDeleteOrEdit(
     onDeleteRequest: () -> Unit,
     onEditRequest: () -> Unit,
     dismissContent: @Composable RowScope.() -> Unit
