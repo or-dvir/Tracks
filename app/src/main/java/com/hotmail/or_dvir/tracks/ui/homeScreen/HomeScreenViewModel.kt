@@ -68,10 +68,6 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    // todo
-    //  delete event
-    //      also all of it's instances!!! make note for future!!!
-
     sealed class UserEvent {
         data class OnCreateNewEvent(val name: String) : UserEvent()
         data class OnQuickOccurrenceClicked(val eventId: Int) : UserEvent()

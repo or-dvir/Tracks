@@ -3,9 +3,19 @@ package com.hotmail.or_dvir.tracks.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 
-@Entity(tableName = EventOccurrenceEntity.TABLE_NAME)
+@Entity(
+    tableName = EventOccurrenceEntity.TABLE_NAME,
+    foreignKeys = [ForeignKey(
+        entity = TrackedEventEntity::class,
+        parentColumns = [TrackedEventEntity.COLUMN_ID],
+        childColumns = [EventOccurrenceEntity.COLUMN_EVENT_ID],
+        onDelete = CASCADE
+    )]
+)
 data class EventOccurrenceEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = COLUMN_ID)
@@ -21,7 +31,6 @@ data class EventOccurrenceEntity(
     @ColumnInfo(name = "note")
     val note: String,
     @ColumnInfo(name = COLUMN_EVENT_ID)
-    // todo do i need to annotate this with @ForeignKey???
     val eventId: Int
 ) {
     companion object {
