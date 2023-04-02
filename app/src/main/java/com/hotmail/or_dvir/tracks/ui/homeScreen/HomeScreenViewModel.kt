@@ -69,7 +69,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     // todo
-    //  create quick instance of event occurrence
     //  delete event
     //      also all of it's instances!!! make note for future!!!
 

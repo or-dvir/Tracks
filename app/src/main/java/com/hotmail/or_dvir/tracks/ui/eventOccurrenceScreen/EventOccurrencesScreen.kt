@@ -72,7 +72,6 @@ private typealias OnUserEvent = (event: UserEvent) -> Unit
 
 data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     // todo
-    //  animate placement of list items e.g. when renaming (also for home screen!!!)
     //  when scrolling all the way down, hide FAB (also home screen!!!)
     //  dark mode!!!
     //  change process name (fully qualified app name)
@@ -114,7 +113,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    //todo what are the "contentValues"? do i need this???
                     .padding(it)
             ) {
                 val eventOccurrences =
@@ -256,7 +254,6 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     }
 
                     // note
-                    // todo make outlined???
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth()

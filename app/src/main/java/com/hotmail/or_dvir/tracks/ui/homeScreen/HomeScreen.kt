@@ -52,15 +52,8 @@ import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.On
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnEditEvent
 import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 
-// todo
-//  delete trackable event
-//      also delete all instances of this event!!!
-//  app icon
-
 //todo
-//  next steps:
-//  * implement "occurrence details" screen
-//      really necessary? can i integrate it into the "row"???
+//  app icon
 
 private typealias OnUserEvent = (event: UserEvent) -> Unit
 
@@ -89,7 +82,6 @@ class HomeScreen : Screen {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    //todo what are the "contentValues"? do i need this???
                     .padding(it)
             ) {
                 val trackedEvents =
