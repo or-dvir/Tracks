@@ -28,12 +28,14 @@ class NewEditOccurrenceDialogState {
     }
 
     fun setFromOccurrence(occurrence: EventOccurrence) {
-        startDate = startDate
-        endDate = endDate
-        startTime = startTime
-        endTime = endTime
-        note = note
-        editedOccurrenceId = occurrence.id
+        occurrence.let {
+            startDate = it.startDate
+            endDate = it.endDate
+            startTime = it.startTime
+            endTime = it.endTime
+            note = it.note
+            editedOccurrenceId = it.id
+        }
     }
 
     fun reset() {
