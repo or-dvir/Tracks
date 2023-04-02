@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -58,10 +59,6 @@ import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 
 //todo
 //  next steps:
-//  * implement "rename" feature
-//      should add ability to swipe in other direction (shared composable!),
-//      and open the "new item" dialog with the current name filled in
-//  * implement "Event occurrences" screen
 //  * implement "occurrence details" screen
 //      really necessary? can i integrate it into the "row"???
 
@@ -160,13 +157,17 @@ class HomeScreen : Screen {
                 TrackedEventRow(
                     event = trackedEvent,
                     onUserEvent = { userEvent ->
-                        if (userEvent is OnDeleteEvent) {
-                            deleteConfirmationState.apply {
-                                show = true
+                        when (userEvent) {
+                            is OnDeleteEvent -> deleteConfirmationState.apply {
                                 objToDeleteId = userEvent.eventId
+                                show = true
                             }
-                        } else {
-                            onUserEvent(userEvent)
+                            is OnEditEvent -> editEventState.apply {
+                                userInput = userEvent.eventName
+                                editedEventId = userEvent.eventId
+                                show = true
+                            }
+                            else -> onUserEvent(userEvent)
                         }
                     }
                 )
@@ -185,6 +186,16 @@ class HomeScreen : Screen {
                 onDismiss = { reset() }
             )
         }
+
+        editEventState.apply {
+            NewEditEventDialog(
+                state = this,
+                onConfirm = {
+                    editedEventId?.let { onUserEvent(OnEditEvent(it, userInput)) }
+                },
+                onDismiss = { reset() }
+            )
+        }
     }
 
     @Composable
@@ -193,16 +204,24 @@ class HomeScreen : Screen {
     @Composable
     private fun NewEditEventDialog(
         state: NewEditEventDialogState,
-        onUserEvent: OnUserEvent,
+        onConfirm: () -> Unit,
         onDismiss: () -> Unit
     ) {
+        if (!state.show) {
+            return
+        }
+
+        val isEditing by remember(state.editedEventId) {
+            mutableStateOf(state.editedEventId != null)
+        }
+
         TracksDialog(
-            titleRes = R.string.dialogTitle_newTrackableEvent,
-            positiveButtonRes = R.string.create,
+            titleRes = if(isEditing) R.string.dialogTitle_editTrackableEvent else R.string.dialogTitle_newTrackableEvent,
+            positiveButtonRes = if(isEditing) R.string.edit else R.string.create,
             positiveButtonEnabled = !state.isError,
             onDismiss = onDismiss,
             onPositiveButtonClick = {
-                onUserEvent(UserEvent.OnCreateNewEvent(state.userInput))
+                onConfirm()
                 onDismiss()
             }
         ) {
@@ -233,9 +252,7 @@ class HomeScreen : Screen {
 
         SwipeToDeleteOrEdit(
             onDeleteRequest = { onUserEvent(OnDeleteEvent(updatedEvent.id)) },
-            onEditRequest = {
-                //todo
-            }
+            onEditRequest = { onUserEvent(OnEditEvent(updatedEvent.id, updatedEvent.name)) }
         ) {
             val navigator = LocalNavigator.currentOrThrow
             Row(
