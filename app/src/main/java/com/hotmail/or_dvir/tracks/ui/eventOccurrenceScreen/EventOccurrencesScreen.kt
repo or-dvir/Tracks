@@ -73,7 +73,6 @@ private typealias OnUserEvent = (event: UserEvent) -> Unit
 
 data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     // todo
-    //  when scrolling all the way down, hide FAB (also home screen!!!)
     //  dark mode!!!
     //  change process name (fully qualified app name)
 
