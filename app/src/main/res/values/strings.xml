@@ -7,7 +7,9 @@
     <string name="contentDescription_back">back</string>
 
     <string name="dialogTitle_newTrackableEvent">New Trackable Event</string>
+    <string name="dialogTitle_editTrackableEvent">Edit Trackable Event</string>
     <string name="dialogTitle_newOccurrence">New Occurrence</string>
+    <string name="dialogTitle_editOccurrence">Edit Occurrence</string>
 
     <string name="hint_eventName">Event name</string>
     <string name="hint_note">Note</string>
@@ -16,6 +18,7 @@
     <string name="error_endTimeBeforeStartTime">End time cannot be before Start time</string>
 
     <string name="create">create</string>
+    <string name="edit">edit</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="occurrenceAdded">Occurrence added</string>

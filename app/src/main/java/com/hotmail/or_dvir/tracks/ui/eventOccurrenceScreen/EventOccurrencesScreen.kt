@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -58,10 +57,9 @@ import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.ErrorText
 import com.hotmail.or_dvir.tracks.ui.SwipeToDeleteOrEdit
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
-import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.EventOccurrenceData
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent
-import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnCreateNewOccurrence
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnDeleteOccurrence
+import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnNewOrEditOccurrence
 import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -73,11 +71,11 @@ import java.time.LocalTime
 private typealias OnUserEvent = (event: UserEvent) -> Unit
 
 data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
-
-    // required for previews
-//    private constructor() : this(
-//        TrackedEvent(name = "Luke", id = 0)
-//    )
+    // todo
+    //  animate placement of list items e.g. when renaming (also for home screen!!!)
+    //  when scrolling all the way down, hide FAB (also home screen!!!)
+    //  dark mode!!!
+    //  change process name (fully qualified app name)
 
     @Composable
     override fun Content() {
@@ -86,7 +84,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 it.create(event.id)
             }
 
-        var showNewEditOccurrenceDialog by remember { mutableStateOf(false) }
+        val newOccurrenceDialogState = rememberNewEditOccurrenceState()
         val navigator = LocalNavigator.current
 
         Scaffold(
@@ -105,7 +103,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = { showNewEditOccurrenceDialog = true }) {
+                FloatingActionButton(onClick = { newOccurrenceDialogState.show = true }) {
                     Icon(
                         contentDescription = stringResource(R.string.contentDescription_addEventOccurrence),
                         imageVector = Icons.Filled.Add
@@ -131,21 +129,31 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     )
                 }
 
-                if (showNewEditOccurrenceDialog) {
+                newOccurrenceDialogState.apply {
                     val context = LocalContext.current
                     NewEditOccurrenceDialog(
-                        onUserEvent = { userEvent ->
-                            if (userEvent is OnCreateNewOccurrence) {
-                                Toast.makeText(
-                                    context,
-                                    R.string.occurrenceAdded,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        state = this,
+                        onConfirm = {
+                            viewModel.onUserEvent(
+                                OnNewOrEditOccurrence(
+                                    EventOccurrence(
+                                        startDate = startDate,
+                                        endDate = endDate,
+                                        startTime = startTime,
+                                        endTime = endTime,
+                                        note = note,
+                                        eventId = event.id
+                                    )
+                                )
+                            )
 
-                            viewModel.onUserEvent(userEvent)
+                            Toast.makeText(
+                                context,
+                                R.string.occurrenceAdded,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
-                        onDismiss = { showNewEditOccurrenceDialog = false }
+                        onDismiss = { reset() }
                     )
                 }
             }
@@ -153,33 +161,30 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     }
 
     @Composable
-    private fun rememberNewEditOccurrenceState() = remember { NewEditOccurrenceState() }
-
+    private fun rememberNewEditOccurrenceState() = remember { NewEditOccurrenceDialogState() }
 
     @Composable
     private fun NewEditOccurrenceDialog(
-        onUserEvent: OnUserEvent,
+        state: NewEditOccurrenceDialogState,
+        onConfirm: () -> Unit,
         onDismiss: () -> Unit
     ) {
-        rememberNewEditOccurrenceState().apply {
+        if (!state.show) {
+            return
+        }
+
+        val isEditing by remember(state.editedOccurrenceId) {
+            mutableStateOf(state.editedOccurrenceId != null)
+        }
+
+        state.apply {
             TracksDialog(
-                titleRes = R.string.dialogTitle_newOccurrence,
-                positiveButtonRes = R.string.create,
+                titleRes = if(isEditing) R.string.dialogTitle_newOccurrence else R.string.dialogTitle_newOccurrence,
+                positiveButtonRes = if(isEditing) R.string.edit else R.string.create,
                 onDismiss = onDismiss,
                 positiveButtonEnabled = !errorEndTimeBeforeStartTime,
                 onPositiveButtonClick = {
-                    onUserEvent(
-                        OnCreateNewOccurrence(
-                            EventOccurrenceData(
-                                startDate = startDate,
-                                startTime = startTime,
-                                endDate = endDate,
-                                endTime = endTime,
-                                note = note
-                            )
-                        )
-                    )
-
+                    onConfirm()
                     onDismiss()
                 }
             ) {
@@ -377,7 +382,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         eventOccurrences: List<EventOccurrence>,
         onUserEvent: OnUserEvent
     ) {
-        val deleteConfirmationState = rememberDeleteConfirmationDialogState()
+        val deleteOccurrenceState = rememberDeleteConfirmationDialogState()
+        val editOccurrenceState = rememberNewEditOccurrenceState()
 
         LazyColumn {
             itemsIndexed(
@@ -387,13 +393,15 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                 EventOccurrenceRow(
                     occurrence = occurrence,
                     onUserEvent = { userEvent ->
-                        if (userEvent is OnDeleteOccurrence) {
-                            deleteConfirmationState.apply {
-                                show = true
+                        when (userEvent) {
+                            is OnDeleteOccurrence -> deleteOccurrenceState.apply {
                                 objToDeleteId = userEvent.occurrenceId
+                                show = true
                             }
-                        } else {
-                            onUserEvent(userEvent)
+                            is OnNewOrEditOccurrence -> editOccurrenceState.apply {
+                                setFromOccurrence(userEvent.occurrence)
+                                show = true
+                            }
                         }
                     }
                 )
@@ -404,12 +412,36 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             }
         }
 
-        deleteConfirmationState.apply {
+        deleteOccurrenceState.apply {
             DeleteConfirmationDialog(
                 state = this,
                 messageRes = R.string.eventOccurrencesScreen_deleteConfirmation,
                 onConfirm = { onUserEvent(OnDeleteOccurrence(objToDeleteId)) },
                 onDismiss = { reset() }
+            )
+        }
+
+        editOccurrenceState.apply {
+            NewEditOccurrenceDialog(
+                state = this,
+                onDismiss = { reset() },
+                onConfirm = {
+                    editedOccurrenceId?.let {
+                        onUserEvent(
+                            OnNewOrEditOccurrence(
+                                EventOccurrence(
+                                    startDate = startDate,
+                                    endDate = endDate,
+                                    startTime = startTime,
+                                    endTime = endTime,
+                                    note = note,
+                                    eventId = event.id,
+                                    id = it
+                                )
+                            )
+                        )
+                    }
+                }
             )
         }
     }
@@ -419,21 +451,11 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         occurrence: EventOccurrence,
         onUserEvent: OnUserEvent
     ) {
-        // todo
-        //  start date
-        //      edit feature
-        //  end date
-        //      edit feature
-        //  note
-        //      edit feature
-
         val updatedOccurrence by rememberUpdatedState(occurrence)
 
         SwipeToDeleteOrEdit(
             onDeleteRequest = { onUserEvent(OnDeleteOccurrence(updatedOccurrence.id)) },
-            onEditRequest = {
-                //todo
-            }
+            onEditRequest = { onUserEvent(OnNewOrEditOccurrence(updatedOccurrence)) }
         ) {
             Row(
                 modifier = Modifier
@@ -507,25 +529,4 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
             }
         }
     }
-    //todo why aren't previews working?!
-//    @Preview(showBackground = true)
-//    @Composable
-//    private fun TrackedEventRowPreview() {
-//        LazyColumn(
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            items(1) {
-//                EventOccurrenceRow(
-//                    onUserEvent = { },
-//                    occurrence = EventOccurrence(
-//                        startMillis = System.currentTimeMillis(),
-//                        endMillis = null,
-//                        note = "my note",
-//                        id = 0,
-//                        eventId = 0
-//                    )
-//                )
-//            }
-//        }
-//    }
 }
