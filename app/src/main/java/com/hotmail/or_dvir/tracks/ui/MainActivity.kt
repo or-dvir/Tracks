@@ -27,9 +27,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Navigator(HomeScreen()) {
-                        // todo how do i control the speed???
+                        // todo test all transitions on REAL device
                         FadeTransition(it)
 //                        SlideTransition(it)
+//                        ScaleTransition(it)
                     }
                 }
             }
