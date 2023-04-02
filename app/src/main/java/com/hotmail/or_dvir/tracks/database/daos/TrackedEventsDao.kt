@@ -2,6 +2,7 @@ package com.hotmail.or_dvir.tracks.database.daos
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.hotmail.or_dvir.tracks.database.entities.TrackedEventEntity
 import com.hotmail.or_dvir.tracks.database.entities.TrackedEventEntity.Companion.COLUMN_ID
@@ -18,8 +19,8 @@ interface TrackedEventsDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = :id")
     suspend fun loadEventById(id: Int): TrackedEventEntity
 
-    @Insert
-    suspend fun insert(event: TrackedEventEntity): Long
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrReplace(event: TrackedEventEntity): Long
 
     // todo also delete all event instances on other table!!!
     @Query("DELETE FROM $TABLE_NAME WHERE $COLUMN_ID = :eventId")

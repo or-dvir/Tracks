@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface EventOccurrencesRepository {
     fun getAllByStartDateDesc(eventId: Int): Flow<List<EventOccurrence>>
-    suspend fun insert(occurrence: EventOccurrence): Long
+    suspend fun insertOrReplace(occurrence: EventOccurrence): Long
     suspend fun delete(occurrenceId: Int)
 }

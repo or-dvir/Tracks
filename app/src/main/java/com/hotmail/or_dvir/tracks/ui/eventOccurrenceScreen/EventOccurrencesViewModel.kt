@@ -35,7 +35,7 @@ class EventOccurrencesViewModel @AssistedInject constructor(
     private fun onCreateNewOccurrence(data: EventOccurrenceData) {
         coroutineScope.launch {
             data.apply {
-                repo.insert(
+                repo.insertOrReplace(
                     EventOccurrence(
                         startDate = startDate,
                         startTime = startTime,

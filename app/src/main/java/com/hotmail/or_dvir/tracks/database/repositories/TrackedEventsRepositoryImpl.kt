@@ -29,17 +29,17 @@ class TrackedEventsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insert(event: TrackedEvent): Long {
+    override suspend fun insertOrReplace(event: TrackedEvent): Long {
         return shouldNotBeCancelled(
             dispatcher = dispatcher,
             scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
         ) {
-            dao.insert(event.toEntity())
+            dao.insertOrReplace(event.toEntity())
         }
     }
 
     override suspend fun delete(eventId: Int) {
-        return shouldNotBeCancelled(
+        shouldNotBeCancelled(
             dispatcher = dispatcher,
             scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
         ) {

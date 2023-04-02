@@ -48,11 +48,13 @@ import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnEditEvent
 import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 
 // todo
 //  delete trackable event
 //      also delete all instances of this event!!!
+//  app icon
 
 //todo
 //  next steps:
@@ -120,8 +122,12 @@ class HomeScreen : Screen {
                 newEventDialogState.apply {
                     NewEditEventDialog(
                         state = this,
-                        onUserEvent = viewModel::onUserEvent,
-                        onDismiss = { show = false }
+                        onConfirm = {
+                            viewModel.onUserEvent(
+                                UserEvent.OnCreateNewEvent(newEventDialogState.userInput)
+                            )
+                        },
+                        onDismiss = { reset() }
                     )
                 }
             }
@@ -144,6 +150,7 @@ class HomeScreen : Screen {
         onUserEvent: OnUserEvent
     ) {
         val deleteConfirmationState = rememberDeleteConfirmationDialogState()
+        val editEventState = rememberNewEditDialogState()
 
         LazyColumn {
             itemsIndexed(

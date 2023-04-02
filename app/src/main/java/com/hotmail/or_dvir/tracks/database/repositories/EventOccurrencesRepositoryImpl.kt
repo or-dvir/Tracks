@@ -26,12 +26,12 @@ class EventOccurrencesRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun insert(occurrence: EventOccurrence): Long {
+    override suspend fun insertOrReplace(occurrence: EventOccurrence): Long {
         return shouldNotBeCancelled(
             dispatcher = dispatcher,
             scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
         ) {
-            dao.insert(occurrence.toEntity())
+            dao.insertOrReplace(occurrence.toEntity())
         }
     }
 

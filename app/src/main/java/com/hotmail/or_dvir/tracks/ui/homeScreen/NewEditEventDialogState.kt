@@ -9,4 +9,12 @@ class NewEditEventDialogState {
     var show by mutableStateOf(false)
     var userInput by mutableStateOf("")
     val isError by derivedStateOf { userInput.isBlank() }
+
+    var editedEventId: Int? by mutableStateOf(null)
+
+    fun reset() {
+        show = false
+        userInput = ""
+        editedEventId = null
+    }
 }

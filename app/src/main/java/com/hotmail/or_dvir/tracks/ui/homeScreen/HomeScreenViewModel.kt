@@ -27,12 +27,24 @@ class HomeScreenViewModel @Inject constructor(
             is OnQuickOccurrenceClicked -> onQuickOccurrenceClicked(userEvent.eventId)
             is OnCreateNewEvent -> onCreateNewEvent(userEvent.name)
             is OnDeleteEvent -> onDeleteEvent(userEvent.eventId)
+            is UserEvent.OnEditEvent -> onEditEvent(userEvent)
+        }
+    }
+
+    private fun onEditEvent(userEvent: UserEvent.OnEditEvent) {
+        viewModelScope.launch {
+            trackedEventsRepo.insertOrReplace(
+                TrackedEvent(
+                    name = userEvent.eventName,
+                    id = userEvent.eventId
+                )
+            )
         }
     }
 
     private fun onCreateNewEvent(name: String) {
         viewModelScope.launch {
-            trackedEventsRepo.insert(
+            trackedEventsRepo.insertOrReplace(
                 TrackedEvent(name = name)
             )
         }
@@ -43,7 +55,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun onQuickOccurrenceClicked(eventId: Int) {
         viewModelScope.launch {
-            eventOccurrencesRepo.insert(
+            eventOccurrencesRepo.insertOrReplace(
                 EventOccurrence(
                     note = "",
                     eventId = eventId,
@@ -65,5 +77,6 @@ class HomeScreenViewModel @Inject constructor(
         data class OnCreateNewEvent(val name: String) : UserEvent()
         data class OnQuickOccurrenceClicked(val eventId: Int) : UserEvent()
         data class OnDeleteEvent(val eventId: Int) : UserEvent()
+        data class OnEditEvent(val eventId: Int, val eventName: String) : UserEvent()
     }
 }
