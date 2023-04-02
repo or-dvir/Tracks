@@ -50,7 +50,7 @@ fun DeleteConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    if(!state.show) {
+    if (!state.show) {
         return
     }
 

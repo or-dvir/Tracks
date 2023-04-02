@@ -50,6 +50,7 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
+import com.hotmail.or_dvir.tracks.lazyListLastItemSpacer
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.toUserFriendlyText
@@ -177,8 +178,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
 
         state.apply {
             TracksDialog(
-                titleRes = if(isEditing) R.string.dialogTitle_newOccurrence else R.string.dialogTitle_newOccurrence,
-                positiveButtonRes = if(isEditing) R.string.edit else R.string.create,
+                titleRes = if (isEditing) R.string.dialogTitle_newOccurrence else R.string.dialogTitle_newOccurrence,
+                positiveButtonRes = if (isEditing) R.string.edit else R.string.create,
                 onDismiss = onDismiss,
                 positiveButtonEnabled = !errorEndTimeBeforeStartTime,
                 onPositiveButtonClick = {
@@ -403,7 +404,9 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     }
                 )
 
-                if (index != eventOccurrences.lastIndex) {
+                if (index == eventOccurrences.lastIndex) {
+                    Spacer(modifier = Modifier.height(lazyListLastItemSpacer))
+                } else {
                     Divider()
                 }
             }

@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -41,6 +43,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
+import com.hotmail.or_dvir.tracks.lazyListLastItemSpacer
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.ErrorText
@@ -164,7 +167,9 @@ class HomeScreen : Screen {
                     }
                 )
 
-                if (index != trackedEvents.lastIndex) {
+                if (index == trackedEvents.lastIndex) {
+                    Spacer(modifier = Modifier.height(lazyListLastItemSpacer))
+                } else {
                     Divider()
                 }
             }
@@ -208,8 +213,8 @@ class HomeScreen : Screen {
         }
 
         TracksDialog(
-            titleRes = if(isEditing) R.string.dialogTitle_editTrackableEvent else R.string.dialogTitle_newTrackableEvent,
-            positiveButtonRes = if(isEditing) R.string.edit else R.string.create,
+            titleRes = if (isEditing) R.string.dialogTitle_editTrackableEvent else R.string.dialogTitle_newTrackableEvent,
+            positiveButtonRes = if (isEditing) R.string.edit else R.string.create,
             positiveButtonEnabled = !state.isError,
             onDismiss = onDismiss,
             onPositiveButtonClick = {

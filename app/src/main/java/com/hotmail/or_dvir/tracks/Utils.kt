@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 
 private val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
 private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+val lazyListLastItemSpacer = 75.dp
 
 fun LocalDate.toUserFriendlyText(): String = this.format(dateFormatter)
 fun LocalTime.toUserFriendlyText(): String = this.format(timeFormatter)
