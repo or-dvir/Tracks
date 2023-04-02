@@ -8,36 +8,19 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
-import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.flow.Flow
 
-// todo delete what is no longer used
-
 private val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
 private val timeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatterBuilder()
-    .append(dateFormatter)
-    .appendLiteral(" ")
-    .append(timeFormatter)
-    .toFormatter()
 
-private fun Long.millisToZonedDateTime() =
-    Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault())
-
-fun LocalDateTime.toEpochMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-
-fun LocalDateTime.toUserFriendlyText() = this.format(dateTimeFormatter)
-fun LocalDate.toUserFriendlyText() = this.format(dateFormatter)
-fun LocalTime.toUserFriendlyText() = this.format(timeFormatter)
+fun LocalDate.toUserFriendlyText(): String = this.format(dateFormatter)
+fun LocalTime.toUserFriendlyText(): String = this.format(timeFormatter)
 
 /**
  * same as [LocalTime.isBefore], but can handle nulls
@@ -48,10 +31,6 @@ fun LocalTime?.isBefore(other: LocalTime?) =
     } else {
         this.isBefore(other)
     }
-
-fun Long.millisToLocalDateTime() = this.millisToZonedDateTime().toLocalDateTime()
-fun Long.millisToLocalDate() = this.millisToZonedDateTime().toLocalDate()
-fun Long.millisToLocalTime() = this.millisToZonedDateTime().toLocalTime()
 
 @Composable
 fun <T> rememberFlow(
