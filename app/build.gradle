@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.tracks'
+    namespace 'com.hotmail.or_dvir.tracks'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.tracks"
+        applicationId "com.hotmail.or_dvir.tracks"
         minSdk 26
         targetSdk 33
         versionCode 1
