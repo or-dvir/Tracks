@@ -49,7 +49,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.example.tracks.R
+import com.hotmail.or_dvir.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
 import com.hotmail.or_dvir.tracks.lazyListLastItemSpacer
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
