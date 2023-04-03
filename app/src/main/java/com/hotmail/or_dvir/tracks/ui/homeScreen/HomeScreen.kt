@@ -58,9 +58,6 @@ import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.On
 import com.hotmail.or_dvir.tracks.ui.mainActivity.MainActivityViewModel
 import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 
-//todo
-//  app icon - credit to Icongeek26 from flaticon
-
 private typealias OnUserEvent = (event: UserEvent) -> Unit
 
 class HomeScreen : Screen {

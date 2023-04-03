@@ -43,4 +43,8 @@
     <string name="setTime">Set time</string>
     <string name="from">From</string>
     <string name="until">Until</string>
+
+    <string name="credits_title">Credits</string>
+    <string name="credits_appIcon">App icon designed by Icongeek26 from flaticon</string>
+
 </resources>

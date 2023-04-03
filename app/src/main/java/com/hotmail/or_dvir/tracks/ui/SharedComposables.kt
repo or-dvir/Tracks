@@ -151,11 +151,12 @@ fun SharedOverflowMenu(
     onChangeTheme: (darkTheme: Boolean) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    var showCreditsDialog by remember { mutableStateOf(false) }
 
     IconButton(onClick = { showMenu = !showMenu }) {
         Icon(
             //these are the default colors of TopAppBar at the time of writing this code
-            tint = if(isDarkTheme) MaterialTheme.colors.onSurface else MaterialTheme.colors.onPrimary,
+            tint = if (isDarkTheme) MaterialTheme.colors.onSurface else MaterialTheme.colors.onPrimary,
             contentDescription = stringResource(R.string.contentDescription_menu),
             imageVector = Icons.Default.MoreVert
         )
@@ -175,6 +176,28 @@ fun SharedOverflowMenu(
                 )
             )
         }
+
+        DropdownMenuItem(onClick = {
+            showMenu = false
+            showCreditsDialog = true
+        }) {
+            Text(stringResource(R.string.credits_title))
+        }
+    }
+
+    if (showCreditsDialog) {
+        val dismissDialog = { showCreditsDialog = false }
+
+        AlertDialog(
+            onDismissRequest = dismissDialog,
+            confirmButton = {
+                TextButton(onClick = dismissDialog) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+            title = { Text(stringResource(R.string.credits_title)) },
+            text = { Text(stringResource(R.string.credits_appIcon)) },
+        )
     }
 }
 
