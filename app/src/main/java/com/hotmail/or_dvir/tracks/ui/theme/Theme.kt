@@ -8,20 +8,20 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-private val secondaryColor = Color(0xffAB47BC)
-private val secondaryVariantColor = Color(0xff8d24aa)
-private val primaryVariantColor = Color(0xff303f9f)
+private val secondaryColor = Color(0xffff9800)
+private val secondaryVariantColor = Color(0xfff57d00)
+private val primaryVariantColor = Color(0xff7900CC)
 private val statusBarDark = Color(0xff101010)
 
 private val DarkColorPalette = darkColors(
-    primary = Color(0xff9fa8da),
+    primary = Color(0xffd094ff),
     primaryVariant = primaryVariantColor,
     secondary = secondaryColor,
     secondaryVariant = secondaryVariantColor
 )
 
 private val LightColorPalette = lightColors(
-    primary = Color(0xff3f51b5),
+    primary = Color(0xff9800FF),
     primaryVariant = primaryVariantColor,
     secondary = secondaryColor,
     secondaryVariant = secondaryVariantColor
