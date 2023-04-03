@@ -17,9 +17,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
@@ -28,11 +31,13 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.tracks.R
+import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
+import com.hotmail.or_dvir.tracks.ui.mainActivity.MainActivityViewModel
 
 @Composable
 fun DeleteConfirmationDialog(
@@ -132,6 +139,41 @@ fun LazyItemScope.SwipeToDeleteOrEdit(
             }
         }
     )
+}
+
+@Composable
+fun MainActivityViewModel.collectIsDarkMode() =
+    isDarkModeFlow.collectAsStateLifecycleAware(initial = false).value
+
+@Composable
+fun SharedOverflowMenu(
+    isDarkTheme: Boolean,
+    onChangeTheme: (darkTheme: Boolean) -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
+
+    IconButton(onClick = { showMenu = !showMenu }) {
+        Icon(
+            contentDescription = stringResource(R.string.contentDescription_menu),
+            imageVector = Icons.Default.MoreVert
+        )
+    }
+
+    DropdownMenu(
+        expanded = showMenu,
+        onDismissRequest = { showMenu = false }
+    ) {
+        DropdownMenuItem(onClick = {
+            showMenu = false
+            onChangeTheme(!isDarkTheme)
+        }) {
+            Text(
+                stringResource(
+                    if (isDarkTheme) R.string.menuItem_lightTheme else R.string.menuItem_darkTheme
+                )
+            )
+        }
+    }
 }
 
 @Composable

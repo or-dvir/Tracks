@@ -1,6 +1,5 @@
 package com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -58,8 +57,10 @@ import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.toUserFriendlyText
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.ErrorText
+import com.hotmail.or_dvir.tracks.ui.SharedOverflowMenu
 import com.hotmail.or_dvir.tracks.ui.SwipeToDeleteOrEdit
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
+import com.hotmail.or_dvir.tracks.ui.collectIsDarkMode
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnDeleteOccurrence
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnNewOrEditOccurrence
@@ -82,7 +83,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
 
     @Composable
     override fun Content() {
-        val viewModel =
+        val mainViewModel = getViewModel<MainActivityViewModel>()
+        val screenViewModel =
             getScreenModel<EventOccurrencesViewModel, EventOccurrencesViewModel.Factory> {
                 it.create(event.id)
             }
@@ -93,6 +95,8 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = { Text(event.name) },
                     navigationIcon = {
                         IconButton(onClick = { navigator?.pop() }) {
                             Icon(
@@ -101,8 +105,12 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                             )
                         }
                     },
-                    title = { Text(event.name) },
-                    modifier = Modifier.fillMaxWidth()
+                    actions = {
+                        SharedOverflowMenu(
+                            isDarkTheme = mainViewModel.collectIsDarkMode(),
+                            onChangeTheme = { mainViewModel.setDarkMode(it) }
+                        )
+                    }
                 )
             },
             floatingActionButton = {
@@ -120,14 +128,14 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     .padding(it)
             ) {
                 val eventOccurrences =
-                    viewModel.eventOccurrencesFlow.collectAsStateLifecycleAware(initial = emptyList()).value
+                    screenViewModel.eventOccurrencesFlow.collectAsStateLifecycleAware(initial = emptyList()).value
 
                 if (eventOccurrences.isEmpty()) {
                     EmptyContent()
                 } else {
                     NonEmptyContent(
                         eventOccurrences = eventOccurrences,
-                        onUserEvent = viewModel::onUserEvent
+                        onUserEvent = screenViewModel::onUserEvent
                     )
                 }
 
@@ -136,7 +144,7 @@ data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
                     NewEditOccurrenceDialog(
                         state = this,
                         onConfirm = {
-                            viewModel.onUserEvent(
+                            screenViewModel.onUserEvent(
                                 OnNewOrEditOccurrence(
                                     EventOccurrence(
                                         startDate = startDate,

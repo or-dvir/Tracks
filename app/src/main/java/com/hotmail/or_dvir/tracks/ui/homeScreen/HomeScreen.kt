@@ -1,6 +1,5 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,8 +47,10 @@ import com.hotmail.or_dvir.tracks.lazyListLastItemSpacer
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.DeleteConfirmationDialog
 import com.hotmail.or_dvir.tracks.ui.ErrorText
+import com.hotmail.or_dvir.tracks.ui.SharedOverflowMenu
 import com.hotmail.or_dvir.tracks.ui.SwipeToDeleteOrEdit
 import com.hotmail.or_dvir.tracks.ui.TracksDialog
+import com.hotmail.or_dvir.tracks.ui.collectIsDarkMode
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
@@ -65,14 +66,21 @@ private typealias OnUserEvent = (event: UserEvent) -> Unit
 class HomeScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<HomeScreenViewModel>()
+        val mainViewModel = getViewModel<MainActivityViewModel>()
+        val screenViewModel = getViewModel<HomeScreenViewModel>()
         val newEventDialogState = rememberNewEditDialogState()
 
         Scaffold(
             topBar = {
                 TopAppBar(
+                    modifier = Modifier.fillMaxWidth(),
                     title = { Text(stringResource(R.string.homeScreen_title)) },
-                    modifier = Modifier.fillMaxWidth()
+                    actions = {
+                        SharedOverflowMenu(
+                            isDarkTheme = mainViewModel.collectIsDarkMode(),
+                            onChangeTheme = { mainViewModel.setDarkMode(it) }
+                        )
+                    }
                 )
             },
             floatingActionButton = {
@@ -90,7 +98,7 @@ class HomeScreen : Screen {
                     .padding(it)
             ) {
                 val trackedEvents =
-                    viewModel.trackedEventsFlow.collectAsStateLifecycleAware(initial = emptyList()).value
+                    screenViewModel.trackedEventsFlow.collectAsStateLifecycleAware(initial = emptyList()).value
 
                 if (trackedEvents.isEmpty()) {
                     EmptyContent()
@@ -108,7 +116,7 @@ class HomeScreen : Screen {
                                 ).show()
                             }
 
-                            viewModel.onUserEvent(userEvent)
+                            screenViewModel.onUserEvent(userEvent)
                         }
                     )
                 }
@@ -117,7 +125,7 @@ class HomeScreen : Screen {
                     NewEditEventDialog(
                         state = this,
                         onConfirm = {
-                            viewModel.onUserEvent(
+                            screenViewModel.onUserEvent(
                                 UserEvent.OnCreateNewEvent(newEventDialogState.userInput)
                             )
                         },
