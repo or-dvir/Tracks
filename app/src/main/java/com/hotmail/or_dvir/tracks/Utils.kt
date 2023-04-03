@@ -35,7 +35,7 @@ fun LocalTime?.isBefore(other: LocalTime?) =
     }
 
 @Composable
-fun <T> rememberFlow(
+private fun <T> rememberFlow(
     flow: Flow<T>,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ): Flow<T> {

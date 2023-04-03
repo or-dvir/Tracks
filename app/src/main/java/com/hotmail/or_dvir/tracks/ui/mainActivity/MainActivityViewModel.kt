@@ -1,13 +1,19 @@
 package com.hotmail.or_dvir.tracks.ui.mainActivity
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hotmail.or_dvir.tracks.preferences.repositories.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val userPreferencesRepo: UserPreferencesRepository,
 ) : ViewModel() {
-    fun stuff() = userPreferencesRepo.stuff()
+    val isDarkModeFlow = userPreferencesRepo.isDarkMode()
+
+    fun setDarkMode(isDarkMode: Boolean) {
+        viewModelScope.launch { userPreferencesRepo.setDarkMode(isDarkMode) }
+    }
 }
