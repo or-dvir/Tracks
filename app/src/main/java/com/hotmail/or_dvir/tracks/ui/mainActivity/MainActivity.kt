@@ -10,7 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.transitions.FadeTransition
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.hotmail.or_dvir.tracks.ui.collectIsDarkMode
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreen
 import com.hotmail.or_dvir.tracks.ui.theme.TracksTheme
@@ -34,10 +34,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Navigator(HomeScreen()) {
-                        // todo test all transitions on REAL device
-                        FadeTransition(it)
-//                        SlideTransition(it)
-//                        ScaleTransition(it)
+                        SlideTransition(it)
                     }
                 }
             }
