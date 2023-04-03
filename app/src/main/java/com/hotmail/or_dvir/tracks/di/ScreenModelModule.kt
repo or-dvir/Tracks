@@ -18,4 +18,7 @@ abstract class ScreenModelModule {
     abstract fun bindEventOccurrencesViewModelFactory(
         factory: EventOccurrencesViewModel.Factory
     ): ScreenModelFactory
+
+
+
 }

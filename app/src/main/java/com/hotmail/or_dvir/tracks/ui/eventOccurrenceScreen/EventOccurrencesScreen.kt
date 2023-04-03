@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.tracks.R
 import com.hotmail.or_dvir.tracks.collectAsStateLifecycleAware
@@ -61,6 +63,7 @@ import com.hotmail.or_dvir.tracks.ui.TracksDialog
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnDeleteOccurrence
 import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrencesViewModel.UserEvent.OnNewOrEditOccurrence
+import com.hotmail.or_dvir.tracks.ui.mainActivity.MainActivityViewModel
 import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker

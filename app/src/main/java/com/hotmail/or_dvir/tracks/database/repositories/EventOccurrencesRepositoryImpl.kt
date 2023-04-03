@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 class EventOccurrencesRepositoryImpl @Inject constructor(
     private val dao: EventOccurrencesDao,
     private val scopeThatShouldNotBeCancelled: CoroutineScope,
-    private val dispatcher: CoroutineDispatcher,
+    private val dispatcher: CoroutineDispatcher
 ) : EventOccurrencesRepository {
 
     // todo for now assume all operations are successful

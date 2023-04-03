@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.tracks.ui.homeScreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,6 +54,7 @@ import com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen.EventOccurrenceScreen
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnEditEvent
+import com.hotmail.or_dvir.tracks.ui.mainActivity.MainActivityViewModel
 import com.hotmail.or_dvir.tracks.ui.rememberDeleteConfirmationDialogState
 
 //todo
