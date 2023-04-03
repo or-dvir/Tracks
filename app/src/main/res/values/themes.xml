@@ -1,6 +1,3 @@
 <resources>
-
-    <style name="Theme.Tracks" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/primaryVariant</item>
-    </style>
+    <style name="Theme.Tracks" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

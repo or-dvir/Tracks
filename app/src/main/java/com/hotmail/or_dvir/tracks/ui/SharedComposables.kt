@@ -154,6 +154,8 @@ fun SharedOverflowMenu(
 
     IconButton(onClick = { showMenu = !showMenu }) {
         Icon(
+            //these are the default colors of TopAppBar at the time of writing this code
+            tint = if(isDarkTheme) MaterialTheme.colors.onSurface else MaterialTheme.colors.onPrimary,
             contentDescription = stringResource(R.string.contentDescription_menu),
             imageVector = Icons.Default.MoreVert
         )
