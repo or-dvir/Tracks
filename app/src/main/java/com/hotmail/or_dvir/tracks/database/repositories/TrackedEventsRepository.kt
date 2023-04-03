@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrackedEventsRepository {
     fun getAllSortedByAlphabet(): Flow<List<TrackedEvent>>
-    suspend fun loadEventById(id: Int): TrackedEvent
     suspend fun insertOrReplace(event: TrackedEvent): Long
     suspend fun delete(eventId: Int)
 }

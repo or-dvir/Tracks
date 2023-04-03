@@ -23,12 +23,6 @@ class TrackedEventsRepositoryImpl @Inject constructor(
     override fun getAllSortedByAlphabet(): Flow<List<TrackedEvent>> =
         dao.getAllSortedByAlphabet().map { it.toEvents() }
 
-    override suspend fun loadEventById(id: Int): TrackedEvent {
-        return withContext(dispatcher) {
-            dao.loadEventById(id).toEvent()
-        }
-    }
-
     override suspend fun insertOrReplace(event: TrackedEvent): Long {
         return shouldNotBeCancelled(
             dispatcher = dispatcher,

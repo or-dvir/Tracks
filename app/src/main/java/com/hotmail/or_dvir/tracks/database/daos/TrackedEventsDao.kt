@@ -15,10 +15,6 @@ interface TrackedEventsDao {
     @Query("SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_NAME")
     fun getAllSortedByAlphabet(): Flow<List<TrackedEventEntity>>
 
-    //todo not sure i really need this...would probably have a class with foreign keys
-    @Query("SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = :id")
-    suspend fun loadEventById(id: Int): TrackedEventEntity
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(event: TrackedEventEntity): Long
 
