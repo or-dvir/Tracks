@@ -77,7 +77,6 @@ private typealias OnUserEvent = (event: UserEvent) -> Unit
 
 data class EventOccurrenceScreen(val event: TrackedEvent) : Screen {
     // todo
-    //  dark mode!!!
     //  change process name (fully qualified app name)
     //      first test with RELEASE flavor
 

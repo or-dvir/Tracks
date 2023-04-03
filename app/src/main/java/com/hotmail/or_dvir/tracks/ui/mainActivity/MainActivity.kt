@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            // todo there is a delay until isDArkMode is loaded, and the screen
+            // todo there is a delay until isDarkMode is loaded, and the screen
             //  is "light theme" until then. i need a splash screen!!!!
             TracksTheme(viewModel.collectIsDarkMode()) {
                 // A surface container using the 'background' color from the theme
