@@ -11,6 +11,7 @@ import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.On
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnQuickOccurrenceClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -60,7 +61,7 @@ class HomeScreenViewModel @Inject constructor(
                     note = "",
                     eventId = eventId,
                     startDate = LocalDate.now(),
-                    startTime = null,
+                    startTime = LocalTime.now(),
                     endDate = null,
                     endTime = null,
                 )
