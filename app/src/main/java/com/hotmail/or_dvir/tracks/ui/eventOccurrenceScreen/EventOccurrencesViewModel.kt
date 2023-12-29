@@ -1,7 +1,7 @@
 package com.hotmail.or_dvir.tracks.ui.eventOccurrenceScreen
 
 import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.coroutineScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.hotmail.or_dvir.tracks.database.repositories.EventOccurrencesRepository
 import com.hotmail.or_dvir.tracks.models.EventOccurrence
@@ -30,10 +30,10 @@ class EventOccurrencesViewModel @AssistedInject constructor(
     }
 
     private fun onNewOrEditOccurrence(occurrence: EventOccurrence) =
-        coroutineScope.launch { repo.insertOrReplace(occurrence) }
+        screenModelScope.launch { repo.insertOrReplace(occurrence) }
 
     private fun onDeleteOccurrence(occurrenceId: Int) =
-        coroutineScope.launch { repo.delete(occurrenceId) }
+        screenModelScope.launch { repo.delete(occurrenceId) }
 
     @dagger.assisted.AssistedFactory
     interface Factory : ScreenModelFactory {

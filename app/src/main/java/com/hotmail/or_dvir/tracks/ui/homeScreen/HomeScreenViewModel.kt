@@ -8,6 +8,7 @@ import com.hotmail.or_dvir.tracks.models.EventOccurrence
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnCreateNewEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnDeleteEvent
+import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnEditEvent
 import com.hotmail.or_dvir.tracks.ui.homeScreen.HomeScreenViewModel.UserEvent.OnQuickOccurrenceClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -28,13 +29,13 @@ class HomeScreenViewModel @Inject constructor(
             is OnQuickOccurrenceClicked -> onQuickOccurrenceClicked(userEvent.eventId)
             is OnCreateNewEvent -> onCreateNewEvent(userEvent.name)
             is OnDeleteEvent -> onDeleteEvent(userEvent.eventId)
-            is UserEvent.OnEditEvent -> onEditEvent(userEvent)
+            is OnEditEvent -> onEditEvent(userEvent)
         }
     }
 
-    private fun onEditEvent(userEvent: UserEvent.OnEditEvent) {
+    private fun onEditEvent(userEvent: OnEditEvent) {
         viewModelScope.launch {
-            trackedEventsRepo.insertOrReplace(
+            trackedEventsRepo.update(
                 TrackedEvent(
                     name = userEvent.eventName,
                     id = userEvent.eventId

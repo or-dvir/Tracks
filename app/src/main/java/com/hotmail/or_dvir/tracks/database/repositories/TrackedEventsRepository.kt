@@ -7,4 +7,5 @@ interface TrackedEventsRepository {
     fun getAllSortedByAlphabet(): Flow<List<TrackedEvent>>
     suspend fun insertOrReplace(event: TrackedEvent): Long
     suspend fun delete(eventId: Int)
+    suspend fun update(event: TrackedEvent): Int
 }
