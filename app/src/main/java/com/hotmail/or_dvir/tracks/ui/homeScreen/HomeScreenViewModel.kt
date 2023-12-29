@@ -35,7 +35,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun onEditEvent(userEvent: OnEditEvent) {
         viewModelScope.launch {
-            trackedEventsRepo.insertOrReplace(
+            trackedEventsRepo.update(
                 TrackedEvent(
                     name = userEvent.eventName,
                     id = userEvent.eventId

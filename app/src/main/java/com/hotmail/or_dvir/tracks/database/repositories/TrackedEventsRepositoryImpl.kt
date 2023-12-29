@@ -3,14 +3,12 @@ package com.hotmail.or_dvir.tracks.database.repositories
 import com.hotmail.or_dvir.tracks.database.daos.TrackedEventsDao
 import com.hotmail.or_dvir.tracks.models.TrackedEvent
 import com.hotmail.or_dvir.tracks.toEntity
-import com.hotmail.or_dvir.tracks.toEvent
 import com.hotmail.or_dvir.tracks.toEvents
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class TrackedEventsRepositoryImpl @Inject constructor(
     private val dao: TrackedEventsDao,
@@ -29,6 +27,15 @@ class TrackedEventsRepositoryImpl @Inject constructor(
             scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
         ) {
             dao.insertOrReplace(event.toEntity())
+        }
+    }
+
+    override suspend fun update(event: TrackedEvent): Int {
+        return shouldNotBeCancelled(
+            dispatcher = dispatcher,
+            scopeThatShouldNotBeCancelled = scopeThatShouldNotBeCancelled
+        ) {
+            dao.update(event.toEntity())
         }
     }
 
